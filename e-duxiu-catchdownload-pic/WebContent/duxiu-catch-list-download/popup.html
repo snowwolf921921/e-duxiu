@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="jquery-2.0.0.min.js"></script>
+<script src="popup.js"></script>
+<link rel="stylesheet" type="text/css" href="popup.css" />
+</head>
+<body>
+	<p id="message">加载中</p>
+	<div id="content">
+
+		<button id="bClear" type="button" class="button" value="清空"
+			onclick="bClear();">清空</button>
+		<button id="bStop" type="button" class="button" value="暂停"
+			onclick="bStop();">暂停</button>
+		<button id="bStart" type="button" class="button" value="开始"
+			onclick="bStart();">开始</button>
+		<button id="bReStart" type="button" class="button" value="重新开始"
+			onclick="bReStart();">重新开始</button>
+		<button id="bCheck" type="button" class="button" value="检查"
+			onclick="bCheck();">检查</button>
+		<button id="bExport" type="button" class="button" value="导出"
+			onclick="bExport();">导出</button>
+		<button id="bExportJson" type="button" class="button" value="导出Json"
+			onclick="bExportJson();">导出json</button>
+		<table>
+			<tbody>
+				<tr>
+				
+					<th width="71" class="alte">序号</th>
+					<th width="84">文献名</th>
+					<th width="101">日期</th>
+					<th width="57">版次</th>
+					<th width="452">标题</th>
+					<th width="144">作者</th>
+				</tr>
+
+			</tbody>
+
+		</table>
+	</div>
+	<textarea id="testarea"
+		style="width: 600px; height: 500px; overflow: scroll; border: 1px solid;"></textarea>
+
+</body>
+</html>

@@ -1,0 +1,23 @@
+body {
+	width: 620px;
+}
+table {
+	border-collapse:collapse;
+	font-size: 0.85em;
+}
+table,td {
+	border: 1px solid gray;
+}
+td{
+	padding: 4px;
+	text-overflow:ellipsis;
+}
+td.item-name{
+	text-align: right;
+}
+.content-div{
+	width:600px;
+	white-space:nowrap;
+	text-overflow:ellipsis;
+	overflow:scroll
+}
