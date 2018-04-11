@@ -111,3 +111,4 @@ function bClear(){
 }
 
 document.addEventListener('DOMContentLoaded', initPage);                                                                                  
+
