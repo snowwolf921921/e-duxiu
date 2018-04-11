@@ -5,11 +5,14 @@ var intInterval;
 var currentDownloadInfo={};
 var needDownloadList=[];
 // html&css 相关变量 与页面相关信息
+
 var tagTotalItemsAmount="#queryCount";
+var tagItemsAmountPerPage=10;
+var tagCurrentPageIndex="#resultcontent table:eq(0) li.active";
+/*var tagTotalItemsAmount="#queryCount";
 var tagItemsAmountPerPage="#srPageCount";
 var tagCurrentPageIndex="#resultcontent table:eq(0) li.active";
-// $("#resultcontent table:eq(0) li.active").text()
-//cs 里的totalInfoAndCurrentDownloadInfo变量似乎可以取消
+*///cs 里的totalInfoAndCurrentDownloadInfo变量似乎可以取消
 var totalInfoAndCurrentDownloadInfo = {
 		totalItemsAmount : 0,
 		totalPageAmount : 0,
