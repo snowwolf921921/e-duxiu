@@ -75,22 +75,20 @@ function checkCPageThenCatchAndDownloadOneItem(totalInfoAndCurrentDownloadInfo2)
 }
 function catchAndDownloadOneItem(totalInfoAndCurrentDownloadInfo2){
 //	test
-	var $newdiv1 = $( "<div id='object1'></div>" );
-	var $newiframe = $( "<iframe id='object1'></iframe>" );
+	var $newdiv1 = $( "<div id='object1' style='position:absolute;top:50px;left:300px;'></div>" );
+	var $newiframe = $( "<iframe id='object1' border='2px' height='300px' width='700px' display='inline'></iframe>" );
 	  
-	fr.frameborder = '1px';  
-    ifr.height = '300px';  
-    ifr.width = '1000px';  
-    ifr.style.display = 'inline';  
-    ifr.src='http://book.duxiu.com/bookDetail.jsp?dxNumber=000001024326&d=6AC52643FD37FE591EF8EFCF8745F095&fenlei=070306091501';
-    
+//	$newiframe.frameborder = '1px';  
+//	$newiframe.height = '300px';  
+//	$newiframe.width = '1000px';  
+//	$newiframe.style.display = 'inline';  
+	$newiframe.attr("src","http://book.duxiu.com/bookDetail.jsp?dxNumber=000001024326&d=6AC52643FD37FE591EF8EFCF8745F095&fenlei=070306091501")
     $newdiv1.append($newiframe);
     
-	$( "body" ).append( $newdiv1 );
+	$("body").append($newdiv1);
 //	var iframe = document.createElement('iframe');  
-	
-    var ifr = document.body.appendChild(iframe);  
-    ifr_doc = ifr.contentWindow.document;  
+//    var ifr = document.body.appendChild(iframe);  
+//    ifr_doc = ifr.contentWindow.document;  
 
 /*
     var loadjs = '<html><body><label id=\"label1\">child</label></body></html>';  
