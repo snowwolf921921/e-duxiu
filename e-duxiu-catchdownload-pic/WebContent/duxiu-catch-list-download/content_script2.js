@@ -24,6 +24,7 @@ var totalInfoAndCurrentDownloadInfo = {
 		currentDItemIndexInTotal : 0,// 1开始
 		currentDItemIndexInPage : 0,// 1开始
 	};
+var $divIframe;
 function catchStop(request, sender, sendRequest) {
 	
 	if (request.type == "wolf-catch-stop") {
@@ -33,6 +34,10 @@ function catchStop(request, sender, sendRequest) {
 		var totalInfoAndCurrentDownloadInfo2 = {
 			};
 		totalInfoAndCurrentDownloadInfo2=request.data;
+
+		$divIframe=creatIframe();
+		$("body").append(creatIframe());
+		
 		checkCPageThenCatchAndDownloadOneItem(totalInfoAndCurrentDownloadInfo2);
 	} else if (request.type == "firstStart") {
 		// 获取总体信息，传到bg存储，以这些信息为循环信息
@@ -73,23 +78,23 @@ function checkCPageThenCatchAndDownloadOneItem(totalInfoAndCurrentDownloadInfo2)
 		// 考虑翻页不成功情况？通知bg？记录如较长时间没有到下个item，通知cs重新下载，并记录问题;
 	}	
 }
-function catchAndDownloadOneItem(totalInfoAndCurrentDownloadInfo2){
-//	test
-	var $newdiv1 = $( "<div id='object1' style='position:absolute;top:50px;left:300px;'></div>" );
-	var $newiframe = $( "<iframe id='object1' border='2px' height='300px' width='700px' display='inline'></iframe>" );
-	  
-//	$newiframe.frameborder = '1px';  
-//	$newiframe.height = '300px';  
-//	$newiframe.width = '1000px';  
-//	$newiframe.style.display = 'inline';  
+//return the div jquery object that include the iframe
+function creatIframe(){
+	var $newdiv1 = $( "<div id='divIframe' style='position:absolute;top:500px;left:700px;'></div>" );
+	var $newiframe = $( "<iframe id='embedIframe' border='2px' height='1000px' width='1000px' display='inline'></iframe>" );
 	$newiframe.attr("src","http://book.duxiu.com/bookDetail.jsp?dxNumber=000001024326&d=6AC52643FD37FE591EF8EFCF8745F095&fenlei=070306091501")
     $newdiv1.append($newiframe);
-    
-	$("body").append($newdiv1);
+	return $newdiv1;
+}
+function catchAndDownloadOneItem(totalInfoAndCurrentDownloadInfo2){
 //	var iframe = document.createElement('iframe');  
 //    var ifr = document.body.appendChild(iframe);  
 //    ifr_doc = ifr.contentWindow.document;  
 
+	//
+	$('#embedIframe').contents().find('.card_text dl dt').text()
+//	余下多行
+	$('#embedIframe').contents().find('.card_text dl dd').eq(0).text()
 /*
     var loadjs = '<html><body><label id=\"label1\">child</label></body></html>';  
     ifr_doc.open();  
