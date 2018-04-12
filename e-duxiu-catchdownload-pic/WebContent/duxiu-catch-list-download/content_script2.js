@@ -25,6 +25,7 @@ var totalInfoAndCurrentDownloadInfo = {
 		currentDItemIndexInPage : 0,// 1开始
 	};
 var $divIframe;
+var $iframeEmbed;
 function catchStop(request, sender, sendRequest) {
 	
 	if (request.type == "wolf-catch-stop") {
@@ -34,9 +35,7 @@ function catchStop(request, sender, sendRequest) {
 		var totalInfoAndCurrentDownloadInfo2 = {
 			};
 		totalInfoAndCurrentDownloadInfo2=request.data;
-
-		$divIframe=creatIframe();
-		$("body").append(creatIframe());
+		
 		
 		checkCPageThenCatchAndDownloadOneItem(totalInfoAndCurrentDownloadInfo2);
 	} else if (request.type == "firstStart") {
@@ -55,6 +54,13 @@ function catchStop(request, sender, sendRequest) {
 		var msg = {};
 		msg.type = "totalInfo";
 		msg.data=totalInfoAndCurrentDownloadInfo;
+		
+		//iframe
+		$divIframe = $( "<div id='divIframe' style='position:absolute;top:500px;left:700px;'></div>" );
+		$iframeEmbed = $( "<iframe id='embedIframe' border='2px' height='1000px' width='1000px' display='inline'></iframe>" );
+		$iframeEmbed.attr("src","http://book.duxiu.com/bookDetail.jsp?dxNumber=000001024326&d=6AC52643FD37FE591EF8EFCF8745F095&fenlei=070306091501")
+	    $divIframe.append($iframeEmbed);
+		$("body").append($divIframe);
 		chrome.runtime.sendMessage(msg);
 	}else{
 		return;
@@ -80,62 +86,48 @@ function checkCPageThenCatchAndDownloadOneItem(totalInfoAndCurrentDownloadInfo2)
 }
 //return the div jquery object that include the iframe
 function creatIframe(){
-	var $newdiv1 = $( "<div id='divIframe' style='position:absolute;top:500px;left:700px;'></div>" );
-	var $newiframe = $( "<iframe id='embedIframe' border='2px' height='1000px' width='1000px' display='inline'></iframe>" );
-	$newiframe.attr("src","http://book.duxiu.com/bookDetail.jsp?dxNumber=000001024326&d=6AC52643FD37FE591EF8EFCF8745F095&fenlei=070306091501")
-    $newdiv1.append($newiframe);
-	return $newdiv1;
+	
 }
 function catchAndDownloadOneItem(totalInfoAndCurrentDownloadInfo2){
-//	var iframe = document.createElement('iframe');  
-//    var ifr = document.body.appendChild(iframe);  
-//    ifr_doc = ifr.contentWindow.document;  
-
 	//
-	$('#embedIframe').contents().find('.card_text dl dt').text()
-//	余下多行
-	$('#embedIframe').contents().find('.card_text dl dd').eq(0).text()
-/*
-    var loadjs = '<html><body><label id=\"label1\">child</label></body></html>';  
-    ifr_doc.open();  
-    ifr_doc.write(loadjs);  
-    ifr_doc.close();  
-    ifr_doc.getElementById("label1").innerHTML = "改变了";*/
-//	test wan
-	
 	// 计算item在当页第几项，应该和计算第几页currentDPageIndex放到一起，是否放到bg中？
 	//计数从1开始，页面元素索引从0开始
 	var currentDItemIndexInPage=(totalInfoAndCurrentDownloadInfo2.currentDItemIndexInTotal-1)%totalInfoAndCurrentDownloadInfo2.itemsAmountPerPage;
-//	var currentDItemIndexInPage=totalInfoAndCurrentDownloadInfo2.currentDPageIndex
 	// 找到这项并catch
 	// 下面与css相关
-	var trOne=$("table[type-id='1'] .resultRow").eq(currentDItemIndexInPage)[0];
-	var itemTrInfo={};
+	var src=$('.book1').eq(currentDItemIndexInPage).find("a[class='px14']").attr("href");
+	$iframeEmbed.attr("src",src);
+	$iframeEmbed.load(function(){
+		var itemTrInfo={};
+		var t1=$iframeEmbed.contents().find('.card_text dl dt').text();
+		var t2=$iframeEmbed.contents().find('.card_text dl dd').eq(0).text();
+		if(t1.length>0 || t2.length>0){
+			itemTrInfo.text=t1+"|"+t2+";\n";
+			totalInfoAndCurrentDownloadInfo2.itemTrInfo = itemTrInfo.text;
+			tSendMessage("currentItemInfo-downloadNextItem",totalInfoAndCurrentDownloadInfo2);
+		}
+	});
+	
+	
+	
+	
+	/*var trOne=$("table[type-id='1'] .resultRow").eq(currentDItemIndexInPage)[0];
 	title1=$(trOne).find("td").eq(1).children("a").eq(0)[0].innerText;
 	title2=$(trOne).find("td").eq(1).children("a").length>1?$(trOne).find("td").eq(1).children("a").eq(1)[0].innerText:"";
-	
 	itemTrInfo.text=title1+"|"+title2+"|"
 		+getFormatedAndAuthorAndBookinfo($(".resultRow").eq(currentDItemIndexInPage).find("td").eq(1).find("div"))
 		+";\n";// 加；号和换行
-//	totalNo=(row.pageNo-1)*currentPageCount+Number(row.no)+1;
-//	data.pageDispalyText +=Number(totalNo)+"."+row.text;
-//	msgItemInfo.type = "current-download-item-info-waitdownload";
-	/*itemTrInfo.text="currentDPageIndex:"+totalInfoAndCurrentDownloadInfo2.currentDPageIndex+";currentDItemIndexInTotal:"+totalInfoAndCurrentDownloadInfo2.currentDItemIndexInTotal
-					+";currentDItemIndexInPage:"+currentDItemIndexInPage+itemTrInfo.text;*/
 	itemTrInfo.text="p:"+totalInfoAndCurrentDownloadInfo2.currentDPageIndex
 	+";n:"+totalInfoAndCurrentDownloadInfo2.currentDItemIndexInTotal
 	+";i:"+currentDItemIndexInPage+itemTrInfo.text;
 	totalInfoAndCurrentDownloadInfo2.itemTrInfo = itemTrInfo.text;
-//	msgItemInfo.data=totalInfoAndCurrentDownloadInfo;
-//	chrome.runtime.sendMessage(msgItemInfo);
 	var images=$("img[src='/public/portal/image/download.gif']");
 	if ($(trOne).find(images).length>0){
 		//download item   需要进一步在学校调试和修改   msg 接收端还有没有写
 		tSendMessage("currentItemInfo-waitdownload",totalInfoAndCurrentDownloadInfo2);
-//		click($(trOne).find(images).parent()[0]);
 	}else{
 		tSendMessage("currentItemInfo-downloadNextItem",totalInfoAndCurrentDownloadInfo2);
-	}
+	}*/
 }
 function tSendMessage(msgType,data){
 	var msg = {};
