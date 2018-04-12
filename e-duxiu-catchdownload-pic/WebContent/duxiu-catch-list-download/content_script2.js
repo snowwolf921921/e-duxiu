@@ -6,9 +6,11 @@ var currentDownloadInfo={};
 var needDownloadList=[];
 // html&css 相关变量 与页面相关信息
 
-var tagTotalItemsAmount="#queryCount";
+var tagTotalItemsAmount="#searchinfo b:eq(1)";
+//程序使用示例
+//totalItemsAmount=substrStartToIndexofToNumber($(tagTotalItemsAmount).text(),0,'种');
 var tagItemsAmountPerPage=10;
-var tagCurrentPageIndex="#resultcontent table:eq(0) li.active";
+var tagCurrentPageIndex="#searchinfo b:eq(1)";//文本示例<b>11433 种,用时 0.01 秒</b>
 /*var tagTotalItemsAmount="#queryCount";
 var tagItemsAmountPerPage="#srPageCount";
 var tagCurrentPageIndex="#resultcontent table:eq(0) li.active";
@@ -22,6 +24,7 @@ var totalInfoAndCurrentDownloadInfo = {
 		currentDItemIndexInPage : 0,// 1开始
 	};
 function catchStop(request, sender, sendRequest) {
+	
 	if (request.type == "wolf-catch-stop") {
 		stopCatchAndDl();
 	} else if (request.type == "msg-catch&downloadThisItem-withTotalInfo") {
@@ -40,7 +43,7 @@ function catchStop(request, sender, sendRequest) {
 				currentDItemIndexInTotal:1,// 1开始
 				currentDItemIndexInPage:0,//1开始
 		};
-		totalInfoAndCurrentDownloadInfo.totalItemsAmount=Number($(tagTotalItemsAmount).text());
+		totalInfoAndCurrentDownloadInfo.totalItemsAmount=pGetTotalItemsAmountNumber();
 		// totalCatchjobInfoAndCurrentDownloadInfo.itemsAmountPerPage=Number($(tagTotalItemsAmount));
 		totalInfoAndCurrentDownloadInfo.itemsAmountPerPage=Number($(tagItemsAmountPerPage).val());
 		var msg = {};
@@ -179,78 +182,9 @@ function tNextPage() {
 		click($("#resultcontent").find("table").eq(0).find("li").last().prev().find("a")[0]);
 //	} 
 }
-/*
-function getCurrentPageData(){
-	if(bAllowNextPage){	
-		var msg = {};
-				msg.type = "wolf-catch-pagedata";
-				// 当前在第几页
-				var currentPageNo =$("#resultcontent").find("table").eq(0).find("li.active").text()
-				var data = {
-					records : [],
-					pageDispalyText : ''
-				};
-		// 容错处理
-		var rowEmpty=false;
-		data=getTableDataAndDl(currentPageNo);
-		if(!data.rowEmpty){
-			msg.data = data;
-			chrome.runtime.sendMessage(msg);
-		}
-		if (waitingDownload){stopCatch()};
-	}	
+function tSubstrStartToIndexofToNumber(sourceStr,start,indexStr){
+	return Number(sourceStr.substring(start,sourceStr.indexOf(indexStr)).trim());
 }
-function getDomainFromUrl(url){
-	var host = "null";
-	if(typeof url == "undefined" || null == url)
-		url = window.location.href;
-	var match = url.match(regex);
-	if(typeof match != "undefined" && null != match)
-		host = match[1];
-	return host;
+function pGetTotalItemsAmountNumber(){
+	return substrStartToIndexofToNumber($(tagTotalItemsAmount).text(),0,'种');
 }
-
-function finishLoad(){
-	return !($(".xubox_msg,.xubox_text").text()=="正在检索中...");
-}
-function checkForValidUrl(tabId, changeInfo, tab) {
-	if(toolGetDomainFromUrl(tab.url).toLowerCase()=="www.cnblogs.com"){
-		chrome.pageAction.show(tabId);
-	}
-};	
-
-function haveNextPage(){
-	// needchange
-	if($("#resultcontent").find("table").eq(0).find("li").last().find("a").hasClass("next")){
-		return true;
-	}else{
-		return false;
-	}
-};
-function  checkGetDataDlAndNextPage(){
-	if (finishLoad()){
-		getCurrentPageData();
-		
-		if(!haveNextPage()){
-			// 没有下页，但是可能仍在下载，只停止抓取，所以不停止下载，让消息进程去停止下载
-			stopCatch();
-		}else if(bAllowNextPage){
-			// 可以下页的情况
-			nextPage();
-		}else{
-			// 有下一页不容许，下页的请，可能是在下载，只停止抓取，所以不停止下载，让消息进程去停止下载
-			stopCatch();
-		}
-	}
-}
-
-function stopCatch(){
-	bAllowNextPage = false;
-	window.clearInterval(intInterval);
-}
-function stopCatchAndDl(){
-	bAllowNextPage = false;
-	bAllowDl = false;
-// window.stop();
-	window.clearInterval(intInterval);
-}*/
