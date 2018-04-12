@@ -1,4 +1,4 @@
-﻿{	"name": "a cnbksy catch list download",
+﻿{	"name": "a duxiu catch list download",
 	"version": "0.0.1",
 	"background": { "scripts": ["jquery-2.0.0.min.js", "background.js"] },
 	"browser_action": {
@@ -6,7 +6,7 @@
 			"19": "cnblogs_19.png",
 			"38": "cnblogs_38.png"
 		},
-		"default_title": "cnblogs.com article information", /* shown in tooltip*/
+		"default_title": "duxiu.com article information", /* shown in tooltip*/
 		"default_popup": "popup.html"
 	},
 	"permissions" : ["http://*.duxiu.com/*","tabs","downloads","webNavigation","webRequest"],//"permissions" : ["tabs","http://*.cnbksy.com/*","downloads"],

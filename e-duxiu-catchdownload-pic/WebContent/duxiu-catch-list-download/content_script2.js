@@ -6,13 +6,14 @@ var currentDownloadInfo={};
 var needDownloadList=[];
 // html&css 相关变量 与页面相关信息
 
-var tagTotalItemsAmount="#searchinfo b:eq(1)";
+var tagTotalItemsAmount="#searchinfo b:eq(1)";//文本示例<b>11433 种,用时 0.01 秒</b>
 //程序使用示例
 //totalItemsAmount=substrStartToIndexofToNumber($(tagTotalItemsAmount).text(),0,'种');
-var tagItemsAmountPerPage=10;
-var tagCurrentPageIndex="#searchinfo b:eq(1)";//文本示例<b>11433 种,用时 0.01 秒</b>
+var itemsAmountPerPage=10;
+var tagCurrentPageIndex="#searchinfo font:eq(1)";//取该div中的第二个红字
+
 /*var tagTotalItemsAmount="#queryCount";
-var tagItemsAmountPerPage="#srPageCount";
+var tagItemsAmountPerPage="#srPageCoun
 var tagCurrentPageIndex="#resultcontent table:eq(0) li.active";
 *///cs 里的totalInfoAndCurrentDownloadInfo变量似乎可以取消
 var totalInfoAndCurrentDownloadInfo = {
@@ -45,7 +46,7 @@ function catchStop(request, sender, sendRequest) {
 		};
 		totalInfoAndCurrentDownloadInfo.totalItemsAmount=pGetTotalItemsAmountNumber();
 		// totalCatchjobInfoAndCurrentDownloadInfo.itemsAmountPerPage=Number($(tagTotalItemsAmount));
-		totalInfoAndCurrentDownloadInfo.itemsAmountPerPage=Number($(tagItemsAmountPerPage).val());
+		totalInfoAndCurrentDownloadInfo.itemsAmountPerPage=pGetItemsAmountPerPage();
 		var msg = {};
 		msg.type = "totalInfo";
 		msg.data=totalInfoAndCurrentDownloadInfo;
@@ -73,6 +74,32 @@ function checkCPageThenCatchAndDownloadOneItem(totalInfoAndCurrentDownloadInfo2)
 	}	
 }
 function catchAndDownloadOneItem(totalInfoAndCurrentDownloadInfo2){
+//	test
+	var $newdiv1 = $( "<div id='object1'></div>" );
+	var $newiframe = $( "<iframe id='object1'></iframe>" );
+	  
+	fr.frameborder = '1px';  
+    ifr.height = '300px';  
+    ifr.width = '1000px';  
+    ifr.style.display = 'inline';  
+    ifr.src='http://book.duxiu.com/bookDetail.jsp?dxNumber=000001024326&d=6AC52643FD37FE591EF8EFCF8745F095&fenlei=070306091501';
+    
+    $newdiv1.append($newiframe);
+    
+	$( "body" ).append( $newdiv1 );
+//	var iframe = document.createElement('iframe');  
+	
+    var ifr = document.body.appendChild(iframe);  
+    ifr_doc = ifr.contentWindow.document;  
+
+/*
+    var loadjs = '<html><body><label id=\"label1\">child</label></body></html>';  
+    ifr_doc.open();  
+    ifr_doc.write(loadjs);  
+    ifr_doc.close();  
+    ifr_doc.getElementById("label1").innerHTML = "改变了";*/
+//	test wan
+	
 	// 计算item在当页第几项，应该和计算第几页currentDPageIndex放到一起，是否放到bg中？
 	//计数从1开始，页面元素索引从0开始
 	var currentDItemIndexInPage=(totalInfoAndCurrentDownloadInfo2.currentDItemIndexInTotal-1)%totalInfoAndCurrentDownloadInfo2.itemsAmountPerPage;
@@ -186,5 +213,8 @@ function tSubstrStartToIndexofToNumber(sourceStr,start,indexStr){
 	return Number(sourceStr.substring(start,sourceStr.indexOf(indexStr)).trim());
 }
 function pGetTotalItemsAmountNumber(){
-	return substrStartToIndexofToNumber($(tagTotalItemsAmount).text(),0,'种');
+	return tSubstrStartToIndexofToNumber($(tagTotalItemsAmount).text(),0,'种');
+}
+function pGetItemsAmountPerPage(){
+	return itemsAmountPerPage;
 }
