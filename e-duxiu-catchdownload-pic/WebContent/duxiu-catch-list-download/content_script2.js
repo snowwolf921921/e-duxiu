@@ -15,7 +15,7 @@ var tagCurrentPageIndex="#searchinfo font:eq(1)";//取该div中的第二个红�
 /*var tagTotalItemsAmount="#queryCount";
 var tagItemsAmountPerPage="#srPageCoun
 var tagCurrentPageIndex="#resultcontent table:eq(0) li.active";
-*///cs 里的totalInfoAndCurrentDownloadInfo变量似乎可以取消
+*///cs 里的totalInfoAndCurrentDownloadInfo变量似乎可以取消,后来发现不行，这个变量要在iframe 的回调函数里付值
 var totalInfoAndCurrentDownloadInfo = {
 		totalItemsAmount : 0,
 		totalPageAmount : 0,
@@ -40,7 +40,7 @@ function catchStop(request, sender, sendRequest) {
 		checkCPageThenCatchAndDownloadOneItem(totalInfoAndCurrentDownloadInfo2);
 	} else if (request.type == "firstStart") {
 		// 获取总体信息，传到bg存储，以这些信息为循环信息
-		var totalInfoAndCurrentDownloadInfo={
+		var totalInfoAndCurrentDownloadInfo2={
 				totalItemsAmount : 0,
 				totalPagesAmount : 0 ,
 				itemsAmountPerPage:0,
@@ -48,18 +48,16 @@ function catchStop(request, sender, sendRequest) {
 				currentDItemIndexInTotal:1,// 1开始
 				currentDItemIndexInPage:0,//1开始
 		};
-		totalInfoAndCurrentDownloadInfo.totalItemsAmount=pGetTotalItemsAmountNumber();
+		totalInfoAndCurrentDownloadInfo2.totalItemsAmount=pGetTotalItemsAmountNumber();
 		// totalCatchjobInfoAndCurrentDownloadInfo.itemsAmountPerPage=Number($(tagTotalItemsAmount));
-		totalInfoAndCurrentDownloadInfo.itemsAmountPerPage=pGetItemsAmountPerPage();
+		totalInfoAndCurrentDownloadInfo2.itemsAmountPerPage=pGetItemsAmountPerPage();
 		var msg = {};
 		msg.type = "totalInfo";
-		msg.data=totalInfoAndCurrentDownloadInfo;
+		msg.data=totalInfoAndCurrentDownloadInfo2;
 		
 		//iframe
-		$divIframe = $( "<div id='divIframe' style='position:absolute;top:500px;left:700px;'></div>" );
-		$iframeEmbed = $( "<iframe id='embedIframe' border='2px' height='1000px' width='1000px' display='inline'></iframe>" );
-		$iframeEmbed.attr("src","http://book.duxiu.com/bookDetail.jsp?dxNumber=000001024326&d=6AC52643FD37FE591EF8EFCF8745F095&fenlei=070306091501")
-	    $divIframe.append($iframeEmbed);
+		
+		creatIframeAndLoadFunc();
 		$("body").append($divIframe);
 		chrome.runtime.sendMessage(msg);
 	}else{
@@ -85,18 +83,12 @@ function checkCPageThenCatchAndDownloadOneItem(totalInfoAndCurrentDownloadInfo2)
 	}	
 }
 //return the div jquery object that include the iframe
-function creatIframe(){
-	
-}
-function catchAndDownloadOneItem(totalInfoAndCurrentDownloadInfo2){
-	//
-	// 计算item在当页第几项，应该和计算第几页currentDPageIndex放到一起，是否放到bg中？
-	//计数从1开始，页面元素索引从0开始
-	var currentDItemIndexInPage=(totalInfoAndCurrentDownloadInfo2.currentDItemIndexInTotal-1)%totalInfoAndCurrentDownloadInfo2.itemsAmountPerPage;
-	// 找到这项并catch
-	// 下面与css相关
-	var src=$('.book1').eq(currentDItemIndexInPage).find("a[class='px14']").attr("href");
-	$iframeEmbed.attr("src",src);
+function creatIframeAndLoadFunc(){
+	$divIframe = $( "<div id='divIframe' style='position:absolute;top:500px;left:700px;'></div>" );
+	$iframeEmbed = $( "<iframe id='embedIframe' border='2px' height='1000px' width='1000px' display='inline'></iframe>" );
+	$iframeEmbed.attr("src","http://book.duxiu.com/bookDetail.jsp?dxNumber=000001024326&d=6AC52643FD37FE591EF8EFCF8745F095&fenlei=070306091501")
+    $divIframe.append($iframeEmbed);
+	$("body").append($divIframe);
 	$iframeEmbed.load(function(){
 		var itemTrInfo={};
 		var t1=$iframeEmbed.contents().find('.card_text dl dt').text();
@@ -104,12 +96,9 @@ function catchAndDownloadOneItem(totalInfoAndCurrentDownloadInfo2){
 		if(t1.length>0 || t2.length>0){
 			itemTrInfo.text=t1+"|"+t2+";\n";
 			totalInfoAndCurrentDownloadInfo2.itemTrInfo = itemTrInfo.text;
-			tSendMessage("currentItemInfo-downloadNextItem",totalInfoAndCurrentDownloadInfo2);
+			tSendMessage("currentItemInfo-downloadNextItem",totalInfoAndCurrentDownloadInfo);
 		}
 	});
-	
-	
-	
 	
 	/*var trOne=$("table[type-id='1'] .resultRow").eq(currentDItemIndexInPage)[0];
 	title1=$(trOne).find("td").eq(1).children("a").eq(0)[0].innerText;
@@ -128,6 +117,21 @@ function catchAndDownloadOneItem(totalInfoAndCurrentDownloadInfo2){
 	}else{
 		tSendMessage("currentItemInfo-downloadNextItem",totalInfoAndCurrentDownloadInfo2);
 	}*/
+	
+}
+function catchAndDownloadOneItem(totalInfoAndCurrentDownloadInfo2){
+	//
+	// 计算item在当页第几项，应该和计算第几页currentDPageIndex放到一起，是否放到bg中？
+	//计数从1开始，页面元素索引从0开始
+	var currentDItemIndexInPage=(totalInfoAndCurrentDownloadInfo2.currentDItemIndexInTotal-1)%totalInfoAndCurrentDownloadInfo2.itemsAmountPerPage;
+	// 找到这项并catch
+	// 下面与css相关
+	var src=$('.book1').eq(currentDItemIndexInPage).find("a[class='px14']").attr("href");
+	$iframeEmbed.attr("src",src);
+	//wait iframe load（） send back catch data to background，assign totalInfoAndCurrentDownloadInfo2 to globle var ，for load function to get
+	totalInfoAndCurrentDownloadInfo=totalInfoAndCurrentDownloadInfo2;
+	
+	
 }
 function tSendMessage(msgType,data){
 	var msg = {};
