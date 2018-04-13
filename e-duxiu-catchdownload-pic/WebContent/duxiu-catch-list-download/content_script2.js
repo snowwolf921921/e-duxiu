@@ -52,13 +52,13 @@ function catchStop(request, sender, sendRequest) {
 		// totalCatchjobInfoAndCurrentDownloadInfo.itemsAmountPerPage=Number($(tagTotalItemsAmount));
 		totalInfoAndCurrentDownloadInfo2.itemsAmountPerPage=pGetItemsAmountPerPage();
 		var msg = {};
-		msg.type = "totalInfo";
+		msg.type = "firstStartToBg";
 		msg.data=totalInfoAndCurrentDownloadInfo2;
 		
 		//iframe
-		
 		creatIframeAndLoadFunc();
 		$("body").append($divIframe);
+		
 		chrome.runtime.sendMessage(msg);
 	}else{
 		return;
@@ -91,11 +91,11 @@ function creatIframeAndLoadFunc(){
 	$("body").append($divIframe);
 	$iframeEmbed.load(function(){
 		var itemTrInfo={};
-		var t1=$iframeEmbed.contents().find('.card_text dl dt').text();
-		var t2=$iframeEmbed.contents().find('.card_text dl dd').eq(0).text();
+		var t1=$iframeEmbed.contents().find('.card_text dl dt').text().trim();
+		var t2=$iframeEmbed.contents().find('.card_text dl dd').eq(0).text().trim();
 		if(t1.length>0 || t2.length>0){
 			itemTrInfo.text=t1+"|"+t2+";\n";
-			totalInfoAndCurrentDownloadInfo2.itemTrInfo = itemTrInfo.text;
+			totalInfoAndCurrentDownloadInfo.itemTrInfo = itemTrInfo.text;
 			tSendMessage("currentItemInfo-downloadNextItem",totalInfoAndCurrentDownloadInfo);
 		}
 	});

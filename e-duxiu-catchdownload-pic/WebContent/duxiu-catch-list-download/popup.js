@@ -25,8 +25,8 @@ function initClick() {
 			'click', chrome.extension.getBackgroundPage().bStop);                                                     
 	document.querySelector('#bStart').addEventListener(                       
 			'click', chrome.extension.getBackgroundPage().bStart);                                                     
-	document.querySelector('#bReStart').addEventListener(                       
-			'click', chrome.extension.getBackgroundPage().bReStart);                                                     
+	document.querySelector('#bResume').addEventListener(                       
+			'click', chrome.extension.getBackgroundPage().bResume);                                                     
 	document.querySelector('#bCheck').addEventListener(                       
 			'click', bCheck);                                                     
 	document.querySelector('#bExport').addEventListener(                       
