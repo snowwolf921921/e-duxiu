@@ -70,6 +70,7 @@ function checkCPageThenCatchAndDownloadOneItem(totalInfoAndCurrentDownloadInfo2)
 // check current page index ==totalInfoAndCurrentDownloadInfo.pageIndex
 //	totalInfoAndCurrentDownloadInfo=totalInfoAndCurrentDownloadInfo2;
 	totalInfoAndCurrentDownloadInfo2.currentDPageIndex= tCaltulatePageIndex(totalInfoAndCurrentDownloadInfo2.currentDItemIndexInTotal,totalInfoAndCurrentDownloadInfo2.itemsAmountPerPage);
+	totalInfoAndCurrentDownloadInfo=totalInfoAndCurrentDownloadInfo2;
 	//
 	if(Number($(tagCurrentPageIndex).text())==totalInfoAndCurrentDownloadInfo2.currentDPageIndex){
 		catchAndDownloadOneItem(totalInfoAndCurrentDownloadInfo2)
@@ -95,10 +96,27 @@ function creatIframeAndLoadFunc(){
 		var t2=$iframeEmbed.contents().find('.card_text dl dd').eq(0).text().trim();
 		if(t1.length>0 || t2.length>0){
 			itemTrInfo.text=t1+"|"+t2+";\n";
+			itemTrInfo.text="p:"+totalInfoAndCurrentDownloadInfo.currentDPageIndex
+			+";n:"+totalInfoAndCurrentDownloadInfo.currentDItemIndexInTotal
+			+";i:"+totalInfoAndCurrentDownloadInfo.currentDItemIndexInPage+"^"
+			+itemTrInfo.text;
 			totalInfoAndCurrentDownloadInfo.itemTrInfo = itemTrInfo.text;
 			tSendMessage("currentItemInfo-downloadNextItem",totalInfoAndCurrentDownloadInfo);
 		}
 	});
+	
+/*	function downloadCheckedLinks() {
+		  for (var i = 0; i < visibleLinks.length; ++i) {
+		    if (document.getElementById('check' + i).checked) {
+		      chrome.downloads.download({url: visibleLinks[i]},
+		                                             function(id) {
+		      });
+		    }
+		  }
+		  window.close();
+		}
+	*/
+	
 	
 	/*var trOne=$("table[type-id='1'] .resultRow").eq(currentDItemIndexInPage)[0];
 	title1=$(trOne).find("td").eq(1).children("a").eq(0)[0].innerText;
