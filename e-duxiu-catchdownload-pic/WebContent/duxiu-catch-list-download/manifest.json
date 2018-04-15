@@ -9,7 +9,7 @@
 		"default_title": "duxiu.com article information", /* shown in tooltip*/
 		"default_popup": "popup.html"
 	},
-	"permissions" : ["http://*.duxiu.com/advsearch*","tabs","downloads","webNavigation","webRequest"],//"permissions" : ["tabs","http://*.cnbksy.com/*","downloads"],
+	"permissions" : ["http://*.duxiu.com/*","http://unicover.duxiu.com/*","downloads","tabs","webNavigation","webRequest"],
 	"content_scripts":[{
 		"matches":["http://*.duxiu.com/advsearch*"],
 		"all_frames": true,

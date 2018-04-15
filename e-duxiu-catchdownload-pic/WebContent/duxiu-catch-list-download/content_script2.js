@@ -23,6 +23,7 @@ var totalInfoAndCurrentDownloadInfo = {
 		currentDPageIndex : 0, // 1开始
 		currentDItemIndexInTotal : 0,// 1开始
 		currentDItemIndexInPage : 0,// 1开始
+		cImageUrl:''
 	};
 var $divIframe;
 var $iframeEmbed;
@@ -145,6 +146,12 @@ function catchAndDownloadOneItem(totalInfoAndCurrentDownloadInfo2){
 	// 找到这项并catch
 	// 下面与css相关
 	var src=$('.book1').eq(currentDItemIndexInPage).find("a[class='px14']").attr("href");
+	//下载图片
+	var urlImage=$('.book1').eq(currentDItemIndexInPage).find("img[alt='封面']").attr("src");
+//	chrome.downloads.download({"url": urlImage},function(id) {
+//	});
+	//获取书的详细信息
+	totalInfoAndCurrentDownloadInfo2.cImageUrl=urlImage
 	$iframeEmbed.attr("src",src);
 	//wait iframe load（） send back catch data to background，assign totalInfoAndCurrentDownloadInfo2 to globle var ，for load function to get
 	totalInfoAndCurrentDownloadInfo=totalInfoAndCurrentDownloadInfo2;
@@ -195,7 +202,7 @@ function getFormatedAndAuthorAndBookinfo(dObject){
 	}
 	return authors+"|"+bookInfoText;
 }
-function download(currentDownloadPageIndex){
+/*function download(currentDownloadPageIndex){
 // currentDownloadInfo2 {pageNo,totalNo,pageIndex}
 // 初步想法：将下载的总信息放在 bg中，因为cs每次激活都会从新执行，以总信息作为循环依据，并修改成单项下载
 	var currentDownloadInfo2={}
@@ -213,7 +220,7 @@ function download(currentDownloadPageIndex){
 	msgDownload.type = "current-download-item-info";
 	msgDownload.currentDownloadInfo2=currentDownloadInfo2;
 	chrome.runtime.sendMessage(msgDownload);
-}
+}*/
 function click(el) {
 	var e = document.createEvent('MouseEvent');
 	e.initEvent('click', false, false);
