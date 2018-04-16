@@ -23,7 +23,8 @@ var totalInfoAndCurrentDownloadInfo = {
 		currentDPageIndex : 0, // 1开始
 		currentDItemIndexInTotal : 0,// 1开始
 		currentDItemIndexInPage : 0,// 1开始
-		cImageUrl:''
+		cImageUrl:"",
+		cPicName:""
 	};
 var $divIframe;
 var $iframeEmbed;
@@ -95,13 +96,15 @@ function creatIframeAndLoadFunc(){
 		var itemTrInfo={};
 		var t1=$iframeEmbed.contents().find('.card_text dl dt').text().trim();
 		var t2=$iframeEmbed.contents().find('.card_text dl dd').eq(0).text().trim();
+		var cPicName=t1;
 		if(t1.length>0 || t2.length>0){
 			itemTrInfo.text=t1+"|"+t2+";\n";
-			itemTrInfo.text="p:"+totalInfoAndCurrentDownloadInfo.currentDPageIndex
-			+";n:"+totalInfoAndCurrentDownloadInfo.currentDItemIndexInTotal
+			itemTrInfo.text="n:"+totalInfoAndCurrentDownloadInfo.currentDItemIndexInTotal+
+			";p:"+totalInfoAndCurrentDownloadInfo.currentDPageIndex
 			+";i:"+totalInfoAndCurrentDownloadInfo.currentDItemIndexInPage+"^"
 			+itemTrInfo.text;
 			totalInfoAndCurrentDownloadInfo.itemTrInfo = itemTrInfo.text;
+			totalInfoAndCurrentDownloadInfo.cPicName = cPicName;
 			tSendMessage("currentItemInfo-downloadNextItem",totalInfoAndCurrentDownloadInfo);
 		}
 	});
