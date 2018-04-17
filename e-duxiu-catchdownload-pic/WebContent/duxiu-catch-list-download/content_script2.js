@@ -29,16 +29,17 @@ var totalInfoAndCurrentDownloadInfo = {
 var $divIframe;
 var $iframeEmbed;
 function catchStop(request, sender, sendRequest) {
-	
 	if (request.type == "wolf-catch-stop") {
 		stopCatchAndDl();
 	} else if (request.type == "msg-catch&downloadThisItem-withTotalInfo") {
 		// 取得itemIndex，catch一条并下载，
-		var totalInfoAndCurrentDownloadInfo2 = {
-			};
+		var totalInfoAndCurrentDownloadInfo2 = {};
 		totalInfoAndCurrentDownloadInfo2=request.data;
-		
-		
+		//翻页，重新加载的情况；
+		if($iframeEmbed==null){
+			creatIframeAndLoadFunc();
+			$("body").append($divIframe);
+		}
 		checkCPageThenCatchAndDownloadOneItem(totalInfoAndCurrentDownloadInfo2);
 	} else if (request.type == "firstStart") {
 		// 获取总体信息，传到bg存储，以这些信息为循环信息
@@ -56,11 +57,9 @@ function catchStop(request, sender, sendRequest) {
 		var msg = {};
 		msg.type = "firstStartToBg";
 		msg.data=totalInfoAndCurrentDownloadInfo2;
-		
 		//iframe
 		creatIframeAndLoadFunc();
 		$("body").append($divIframe);
-		
 		chrome.runtime.sendMessage(msg);
 	}else{
 		return;
@@ -77,14 +76,14 @@ function checkCPageThenCatchAndDownloadOneItem(totalInfoAndCurrentDownloadInfo2)
 	if(Number($(tagCurrentPageIndex).text())==totalInfoAndCurrentDownloadInfo2.currentDPageIndex){
 		catchAndDownloadOneItem(totalInfoAndCurrentDownloadInfo2)
 	}else{
-//		通知bg 记录，并翻页
+//		需要下一页的情况，通知bg 记录，并翻页
 		var msgDownload = {};
 		tSendMessage("askCS-downloadSameItem-afterAWhile",totalInfoAndCurrentDownloadInfo2);
-		tNextPage();
+		pNextPage();
 		// 放到bg 过一段时间等cs翻完页在，bg 向cs发消息继续抓取
 		// 考虑翻页不成功情况？通知bg？记录如较长时间没有到下个item，通知cs重新下载，并记录问题;
 	}	
-}
+} 
 //return the div jquery object that include the iframe
 function creatIframeAndLoadFunc(){
 	$divIframe = $( "<div id='divIframe' style='position:absolute;top:500px;left:700px;'></div>" );
@@ -108,38 +107,6 @@ function creatIframeAndLoadFunc(){
 			tSendMessage("currentItemInfo-downloadNextItem",totalInfoAndCurrentDownloadInfo);
 		}
 	});
-	
-/*	function downloadCheckedLinks() {
-		  for (var i = 0; i < visibleLinks.length; ++i) {
-		    if (document.getElementById('check' + i).checked) {
-		      chrome.downloads.download({url: visibleLinks[i]},
-		                                             function(id) {
-		      });
-		    }
-		  }
-		  window.close();
-		}
-	*/
-	
-	
-	/*var trOne=$("table[type-id='1'] .resultRow").eq(currentDItemIndexInPage)[0];
-	title1=$(trOne).find("td").eq(1).children("a").eq(0)[0].innerText;
-	title2=$(trOne).find("td").eq(1).children("a").length>1?$(trOne).find("td").eq(1).children("a").eq(1)[0].innerText:"";
-	itemTrInfo.text=title1+"|"+title2+"|"
-		+getFormatedAndAuthorAndBookinfo($(".resultRow").eq(currentDItemIndexInPage).find("td").eq(1).find("div"))
-		+";\n";// 加；号和换行
-	itemTrInfo.text="p:"+totalInfoAndCurrentDownloadInfo2.currentDPageIndex
-	+";n:"+totalInfoAndCurrentDownloadInfo2.currentDItemIndexInTotal
-	+";i:"+currentDItemIndexInPage+itemTrInfo.text;
-	totalInfoAndCurrentDownloadInfo2.itemTrInfo = itemTrInfo.text;
-	var images=$("img[src='/public/portal/image/download.gif']");
-	if ($(trOne).find(images).length>0){
-		//download item   需要进一步在学校调试和修改   msg 接收端还有没有写
-		tSendMessage("currentItemInfo-waitdownload",totalInfoAndCurrentDownloadInfo2);
-	}else{
-		tSendMessage("currentItemInfo-downloadNextItem",totalInfoAndCurrentDownloadInfo2);
-	}*/
-	
 }
 function catchAndDownloadOneItem(totalInfoAndCurrentDownloadInfo2){
 	//
@@ -148,11 +115,12 @@ function catchAndDownloadOneItem(totalInfoAndCurrentDownloadInfo2){
 	var currentDItemIndexInPage=(totalInfoAndCurrentDownloadInfo2.currentDItemIndexInTotal-1)%totalInfoAndCurrentDownloadInfo2.itemsAmountPerPage;
 	// 找到这项并catch
 	// 下面与css相关
-	var src=$('.book1').eq(currentDItemIndexInPage).find("a[class='px14']").attr("href");
-	//下载图片
-	var urlImage=$('.book1').eq(currentDItemIndexInPage).find("img[alt='封面']").attr("src");
-//	chrome.downloads.download({"url": urlImage},function(id) {
-//	});
+//	var src=$('.book1').eq(currentDItemIndexInPage).find("a[class='px14']").attr("href"); 0416改版了？
+	
+	//获取链接信息，稍后用iframe
+	var src=$(".books li").eq(currentDItemIndexInPage).find(".divImg a").attr("href");
+	//获取图片info，稍后传回到background开始下载
+	var urlImage=$(".books li").eq(currentDItemIndexInPage).find(".divImg img").attr("src");
 	//获取书的详细信息
 	totalInfoAndCurrentDownloadInfo2.cImageUrl=urlImage
 	$iframeEmbed.attr("src",src);
@@ -182,7 +150,7 @@ function removeHTMLTag(str) {
 	str = str.replace(/ /ig, '');// 去掉
 	return str;
 }
-function clickDownloadYesOrWait(){
+/*function clickDownloadYesOrWait(){
 	// 需要有暂停
 	if($(".xubox_yes,.xubox_botton2").text()!="确定下载"){
 		setTimeout("clickDownloadYesOrWait()", 2000);
@@ -190,7 +158,7 @@ function clickDownloadYesOrWait(){
 		click($(".xubox_yes,.xubox_botton2")[0])
 		return;
 	}
-}
+}*/
 
 function getFormatedAndAuthorAndBookinfo(dObject){
 	divObject=$(dObject);
@@ -231,9 +199,10 @@ function click(el) {
 };
 // 问题处
 
-function tNextPage() {
+function pNextPage() {
 //	if ( bAllowNextPage == true) {
-		click($("#resultcontent").find("table").eq(0).find("li").last().prev().find("a")[0]);
+		click($("#pageinfo a:contains('下一页')")[0]);
+//		click($("#resultcontent").find("table").eq(0).find("li").last().prev().find("a")[0]);
 //	} 
 }
 function tSubstrStartToIndexofToNumber(sourceStr,start,indexStr){
