@@ -10,7 +10,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendRequest){
 });
 function getData() {                          
 	var totalData = chrome.extension.getBackgroundPage().totalData;     
-	if(totalData.displayData.length>0){
+	if(totalData.displayData!=null?totalData.displayData.length>0:false){
 		$("#testarea").text(totalData.displayData);
 		$("#message").text(totalData.downloadStatus);
 	}else{
@@ -22,9 +22,10 @@ function initClick() {
 	document.querySelector('#bClear').addEventListener(                       
 			'click', bClear);                                                     
 	document.querySelector('#bStop').addEventListener(                       
-			'click', chrome.extension.getBackgroundPage().bStop);                                                     
+			'click', chrome.extension.getBackgroundPage().bStop);  
+    
 	document.querySelector('#bStart').addEventListener(                       
-			'click', chrome.extension.getBackgroundPage().bStart);                                                     
+			'click', pBStart);                                                     
 	document.querySelector('#bResume').addEventListener(                       
 			'click', chrome.extension.getBackgroundPage().bResume);                                                     
 	document.querySelector('#bCheck').addEventListener(                       
@@ -34,6 +35,15 @@ function initClick() {
 	document.querySelector('#bExportJson').addEventListener(                       
 			'click', bExportJson);                                                     
 }
+function pBStart(){
+	alert(0);
+	var maxDownloadConfig=Number($("#maxDownloadConfig").val());
+	chrome.storage.sync.set({maxDownloadConfig: maxDownloadConfig}, function() {
+        console.log('Value is set to ' + maxDownloadConfig);
+      });
+    chrome.extension.getBackgroundPage().bStart();  
+}
+
 function initPage() {   
 	initClick();
 	getData();
