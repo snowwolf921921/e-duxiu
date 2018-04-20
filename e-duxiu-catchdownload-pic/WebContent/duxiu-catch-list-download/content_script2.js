@@ -4,6 +4,7 @@ var waitingDownload=false;
 var intInterval;
 var currentDownloadInfo={};
 var needDownloadList=[];
+
 // html&css 相关变量 与页面相关信息
 
 var tagTotalItemsAmount="#searchinfo b:eq(1)";//文本示例<b>11433 种,用时 0.01 秒</b>
