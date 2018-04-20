@@ -23,9 +23,8 @@ function initClick() {
 			'click', bClear);                                                     
 	document.querySelector('#bStop').addEventListener(                       
 			'click', chrome.extension.getBackgroundPage().bStop);  
-    
-	document.querySelector('#bStart').addEventListener(                       
-			'click', pBStart);                                                     
+	
+	document.querySelector('#bStart').addEventListener('click', pBStart);                                                     
 	document.querySelector('#bResume').addEventListener(                       
 			'click', chrome.extension.getBackgroundPage().bResume);                                                     
 	document.querySelector('#bCheck').addEventListener(                       
@@ -36,8 +35,8 @@ function initClick() {
 			'click', bExportJson);                                                     
 }
 function pBStart(){
-	alert(0);
 	var maxDownloadConfig=Number($("#maxDownloadConfig").val());
+	alert(maxDownloadConfig);
 	chrome.storage.sync.set({maxDownloadConfig: maxDownloadConfig}, function() {
         console.log('Value is set to ' + maxDownloadConfig);
       });
