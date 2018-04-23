@@ -87,11 +87,12 @@ function bStop() {
 function bStart() {
 //	maxDownloadConfig=maxDownloadConfigLocal;
 	 chrome.storage.sync.get(['maxD'], function(result) {
-	        console.log('Value currently is ' + result.maxDownloadConfig);
-	        maxDownloadConfig=result.maxDownloadConfig;
+	        console.log('Value currently is ' + result.maxD);
+	        maxDownloadConfig=result.maxD;
+	        nextPageEnableFlag = true;
+	    	tSendMsgToCS("firstStart",{});
 	      });
-	nextPageEnableFlag = true;
-	tSendMsgToCS("firstStart",{});
+	
 };
 function bResume() {
 	nextPageEnableFlag = true;
