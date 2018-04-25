@@ -122,3 +122,9 @@ function bClear(){
 
 document.addEventListener('DOMContentLoaded', initPage);                                                                                  
 
+function tSendMsgToBg(msgType,data) {
+	var msg = {};
+	msg.type = msgType;
+	msg.data=data;
+	chrome.runtime.sendMessage(msg);
+};
