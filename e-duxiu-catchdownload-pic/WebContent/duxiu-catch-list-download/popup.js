@@ -1,3 +1,4 @@
+var bgConfig={};
 chrome.runtime.onMessage.addListener(function(request, sender, sendRequest){
 	if(request.type=="popup-displayData"){
 		getData();
@@ -35,12 +36,13 @@ function initClick() {
 			'click', bExportJson);                                                     
 }
 function pBStart(){
-	var maxDownloadConfig=Number($("#maxDownloadConfig").val());
-//	alert(maxDownloadConfig);
+	bgConfig.maxD=Number($("#maxDownloadConfig").val());
+	tSendMsgToBg("popupStartWithConfig",bgConfig);
+	/*var maxDownloadConfig=Number($("#maxDownloadConfig").val());
 	chrome.storage.sync.set({maxD: maxDownloadConfig}, function() {
         console.log('Value is set to ' + maxDownloadConfig);
         chrome.extension.getBackgroundPage().bStart();  
-      });
+      });*/
     
 }
 

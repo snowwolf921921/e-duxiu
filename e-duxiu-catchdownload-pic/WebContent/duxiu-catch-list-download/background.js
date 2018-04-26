@@ -20,9 +20,14 @@ var nextPageEnableFlag = true;
 var intIntervalNextPage;
 totalData.error = "加载中...";
 //chrome.tabs.onUpdated.addListener(checkForValidUrl);
+
 chrome.runtime.onMessage.addListener(function(request, sender, sendRequest) {
 	// 获取cs消息组装并记录供下面下载时使用并发送给popup显示
-	if (request.type == "wolf-catch-pagedata") {
+	if (request.type == "popupStartWithConfig") {
+		maxDownloadConfig=request.data.maxD;
+        nextPageEnableFlag = true;
+    	tSendMsgToCS("firstStart",{});
+	}else if (request.type == "wolf-catch-pagedata") {
 		
 		totalData.firstAccess = "获取中...";
 		totalData.error = false;
@@ -85,14 +90,13 @@ function bStop() {
 	nextPageEnableFlag=false;
 };
 function bStart() {
-//	maxDownloadConfig=maxDownloadConfigLocal;
-	 chrome.storage.sync.get(['maxD'], function(result) {
+	 /*chrome.storage.sync.get(['maxD'], function(result) {
 	        console.log('Value currently is ' + result.maxD);
 	        maxDownloadConfig=result.maxD;
 	        nextPageEnableFlag = true;
 	    	tSendMsgToCS("firstStart",{});
 	      });
-	
+	*/
 };
 function bResume() {
 	nextPageEnableFlag = true;
@@ -144,16 +148,17 @@ function tSendMsgToCS(msgType,data) {
 	var msg = {};
 	msg.type = msgType;
 	msg.data=data;
-	chrome.tabs.query({
+	chrome.runtime.sendMessage(msg);
+	
+/*	chrome.tabs.query({
 //		 active : true,
 		currentWindow : true
 	}, function(tabs) {
 		if(tabs.length>0){
 			chrome.tabs.sendMessage(tabs[0].id, msg, function(response) {
-//			console.log(response.farewell);
 			});
 		}
-	});
+	});*/
 };
 function tSendMsgToPopup(msgType,data) {
 	var msg = {};
