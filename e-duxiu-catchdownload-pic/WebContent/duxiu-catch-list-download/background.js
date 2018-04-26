@@ -148,9 +148,9 @@ function tSendMsgToCS(msgType,data) {
 	var msg = {};
 	msg.type = msgType;
 	msg.data=data;
-	chrome.runtime.sendMessage(msg);
+//	chrome.runtime.sendMessage(msg);
 	
-/*	chrome.tabs.query({
+	chrome.tabs.query({
 //		 active : true,
 		currentWindow : true
 	}, function(tabs) {
@@ -158,7 +158,7 @@ function tSendMsgToCS(msgType,data) {
 			chrome.tabs.sendMessage(tabs[0].id, msg, function(response) {
 			});
 		}
-	});*/
+	});
 };
 function tSendMsgToPopup(msgType,data) {
 	var msg = {};
