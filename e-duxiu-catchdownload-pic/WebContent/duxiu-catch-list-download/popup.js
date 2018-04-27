@@ -37,10 +37,12 @@ function initClick() {
 function pBStart(){
 	var maxDownloadConfig=Number($("#maxDownloadConfig").val());
 //	alert(maxDownloadConfig);
-	chrome.storage.sync.set({maxD: maxDownloadConfig}, function() {
+	/*chrome.storage.sync.set({maxD: maxDownloadConfig}, function() {
         console.log('Value is set to ' + maxDownloadConfig);
         chrome.extension.getBackgroundPage().bStart();  
-      });
+      });*/
+	
+	 tSendMsgToBg("pupupStart-withConfig",{maxD:maxDownloadConfig});
     
 }
 
