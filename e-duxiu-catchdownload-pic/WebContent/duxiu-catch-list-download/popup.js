@@ -19,6 +19,8 @@ function getData() {
 	
 }
 function initClick() {                          
+	document.querySelector('#config').addEventListener(                       
+			'click', setBgConfig);                                                     
 	document.querySelector('#bClear').addEventListener(                       
 			'click', bClear);                                                     
 	document.querySelector('#bStop').addEventListener(                       
@@ -34,6 +36,15 @@ function initClick() {
 	document.querySelector('#bExportJson').addEventListener(                       
 			'click', bExportJson);                                                     
 }
+function setBgConfig(){
+	var maxDownloadConfig=Number($("#maxDownloadConfig").val());
+//	alert(maxDownloadConfig);
+	/*chrome.storage.sync.set({maxD: maxDownloadConfig}, function() {
+        console.log('Value is set to ' + maxDownloadConfig);
+        chrome.extension.getBackgroundPage().bStart();  
+      });*/
+	tSendMsgToBg("setConfig",{maxD:maxDownloadConfig});
+}
 function pBStart(){
 	var maxDownloadConfig=Number($("#maxDownloadConfig").val());
 //	alert(maxDownloadConfig);
@@ -41,9 +52,7 @@ function pBStart(){
         console.log('Value is set to ' + maxDownloadConfig);
         chrome.extension.getBackgroundPage().bStart();  
       });*/
-	
 	 tSendMsgToBg("pupupStart-withConfig",{maxD:maxDownloadConfig});
-    
 }
 
 function initPage() {   
@@ -117,7 +126,6 @@ function bExportJson() {
 }
 
 function bClear(){
-//	alert(11);
 	chrome.extension.getBackgroundPage().totalData={jsonTotalDatas:[]};
 	$("#testarea").text(""); 
 }
