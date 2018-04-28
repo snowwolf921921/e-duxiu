@@ -36,11 +36,7 @@ function catchStop(request, sender, sendRequest) {
 		// 取得itemIndex，catch一条并下载，
 		var totalInfoAndCurrentDownloadInfo2 = {};
 		totalInfoAndCurrentDownloadInfo2=request.data;
-		//翻页，重新加载的情况；
-		if($iframeEmbed==null){
-			creatIframeAndLoadFunc();
-			$("body").append($divIframe);
-		}
+		
 		checkCPageThenCatchAndDownloadOneItem(totalInfoAndCurrentDownloadInfo2);
 	} else if (request.type == "firstStart") {
 		// 获取总体信息，传到bg存储，以这些信息为循环信息
@@ -75,14 +71,21 @@ function checkCPageThenCatchAndDownloadOneItem(totalInfoAndCurrentDownloadInfo2)
 	totalInfoAndCurrentDownloadInfo=totalInfoAndCurrentDownloadInfo2;
 	//
 	if(Number($(tagCurrentPageIndex).text())==totalInfoAndCurrentDownloadInfo2.currentDPageIndex){
+		//翻页，重新加载的情况；
+		if($iframeEmbed==null){
+			creatIframeAndLoadFunc();
+			$("body").append($divIframe);
+		}
 		catchAndDownloadOneItem(totalInfoAndCurrentDownloadInfo2)
-	}else{
+	}else if(Number($(tagCurrentPageIndex).text())+1==totalInfoAndCurrentDownloadInfo2.currentDPageIndex){
 //		需要下一页的情况，通知bg 记录，并翻页
 		var msgDownload = {};
 		tSendMessage("askCS-downloadSameItem-afterAWhile",totalInfoAndCurrentDownloadInfo2);
 		pNextPage();
 		// 放到bg 过一段时间等cs翻完页在，bg 向cs发消息继续抓取
 		// 考虑翻页不成功情况？通知bg？记录如较长时间没有到下个item，通知cs重新下载，并记录问题;
+	}else {
+		alert("当前要下载的项不在当前页中或下一页！")
 	}	
 } 
 //return the div jquery object that include the iframe

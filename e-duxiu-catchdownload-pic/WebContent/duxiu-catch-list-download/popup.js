@@ -27,8 +27,7 @@ function initClick() {
 			'click', chrome.extension.getBackgroundPage().bStop);  
 	
 	document.querySelector('#bStart').addEventListener('click', pBStart);                                                     
-	document.querySelector('#bResume').addEventListener(                       
-			'click', chrome.extension.getBackgroundPage().bResume);                                                     
+	document.querySelector('#bResume').addEventListener('click', pBResume);                                                     
 	document.querySelector('#bCheck').addEventListener(                       
 			'click', bCheck);                                                     
 	document.querySelector('#bExport').addEventListener(                       
@@ -47,13 +46,14 @@ function setBgConfig(){
 }
 function pBStart(){
 	var maxDownloadConfig=Number($("#maxDownloadConfig").val());
-//	alert(maxDownloadConfig);
-	/*chrome.storage.sync.set({maxD: maxDownloadConfig}, function() {
-        console.log('Value is set to ' + maxDownloadConfig);
-        chrome.extension.getBackgroundPage().bStart();  
-      });*/
 	 tSendMsgToBg("pupupStart-withConfig",{maxD:maxDownloadConfig});
 }
+function pBResume(){
+	var maxDownloadConfig=Number($("#maxDownloadConfig").val());
+	tSendMsgToBg("pupupResume-withConfig",{maxD:maxDownloadConfig});
+}
+
+
 
 function initPage() {   
 	initClick();

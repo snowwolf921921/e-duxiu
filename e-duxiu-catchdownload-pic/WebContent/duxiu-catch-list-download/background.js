@@ -26,6 +26,14 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendRequest) {
 		maxDownloadConfig=request.data.maxD;
 		nextPageEnableFlag = true;
 	    tSendMsgToCS("firstStart",{});
+	}else if (request.type == "pupupResume-withConfig") {
+	    maxDownloadConfig=request.data.maxD;
+	    if(checkMax()){
+	    	nextPageEnableFlag = true;
+	    	tSendMsgToCS("msg-catch&downloadThisItem-withTotalInfo",totalInfoAndCurrentDownloadInfo);
+	    }else{
+	       alert("已经下载到最大值")
+	    }
 	}else if (request.type == "wolf-catch-pagedata") {
 		totalData.firstAccess = "获取中...";
 		totalData.error = false;
@@ -55,10 +63,9 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendRequest) {
 		totalData.displayData += totalInfoAndCurrentDownloadInfo.itemTrInfo;
 		tSendMsgToPopup("popup-displayData");
 		totalInfoAndCurrentDownloadInfo.currentDItemIndexInTotal++;
+		//翻页
 		var bFlagIndexNeedNextPage=tCaltulatePageIndex(totalInfoAndCurrentDownloadInfo.currentDItemIndexInTotal,totalInfoAndCurrentDownloadInfo.itemsAmountPerPage)>totalInfoAndCurrentDownloadInfo.currentDPageIndex;
-//		alert(totalInfoAndCurrentDownloadInfo.currentDItemIndexInTotal+","+totalInfoAndCurrentDownloadInfo.itemsAmountPerPage+","+totalInfoAndCurrentDownloadInfo.currentDPageIndex);
-		if(((maxDownloadConfig==-1||maxDownloadConfig=="")?true:totalInfoAndCurrentDownloadInfo.currentDItemIndexInTotal<=maxDownloadConfig)){
-//			if((totalInfoAndCurrentDownloadInfo.currentDItemIndexInTotal<=totalInfoAndCurrentDownloadInfo.totalItemsAmount)){
+		if(checkMax()){
 			if(!(!nextPageEnableFlag&&bFlagIndexNeedNextPage)){
 				tSendMsgToCS('msg-catch&downloadThisItem-withTotalInfo',totalInfoAndCurrentDownloadInfo);
 			}	
@@ -84,22 +91,11 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendRequest) {
 	}
 });
 
+function checkMax(){
+	return (maxDownloadConfig==-1||maxDownloadConfig=="")?true:totalInfoAndCurrentDownloadInfo.currentDItemIndexInTotal<=maxDownloadConfig
+}
 function bStop() {
 	nextPageEnableFlag=false;
-};
-function bStart() {
-//	maxDownloadConfig=maxDownloadConfigLocal;
-/*	 chrome.storage.sync.get(['maxD'], function(result) {
-	        console.log('Value currently is ' + result.maxD);
-	        maxDownloadConfig=result.maxD;
-	        nextPageEnableFlag = true;
-	    	tSendMsgToCS("firstStart",{});
-	      });*/
-	
-};
-function bResume() {
-	nextPageEnableFlag = true;
-	tSendMsgToCS("msg-catch&downloadThisItem-withTotalInfo",totalInfoAndCurrentDownloadInfo);
 };
 /*chrome.downloads.onDeterminingFilename.addListener(function(item, suggest) {
 	suggest({
