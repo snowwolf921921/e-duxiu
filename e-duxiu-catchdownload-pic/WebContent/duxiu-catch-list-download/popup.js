@@ -138,3 +138,4 @@ function tSendMsgToBg(msgType,data) {
 	msg.data=data;
 	chrome.runtime.sendMessage(msg);
 };
+
