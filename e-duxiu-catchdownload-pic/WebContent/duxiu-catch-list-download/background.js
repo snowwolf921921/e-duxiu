@@ -1,4 +1,4 @@
-﻿//restart 需要读取全局变量
+﻿﻿//restart 需要读取全局变量
 var totalInfoAndCurrentDownloadInfo = {
 	totalItemsAmount : 0,
 	totalPageAmount : 0,
@@ -20,15 +20,13 @@ var nextPageEnableFlag = true;
 var intIntervalNextPage;
 totalData.error = "加载中...";
 //chrome.tabs.onUpdated.addListener(checkForValidUrl);
-
 chrome.runtime.onMessage.addListener(function(request, sender, sendRequest) {
 	// 获取cs消息组装并记录供下面下载时使用并发送给popup显示
-	if (request.type == "popupStartWithConfig") {
+	if (request.type == "pupupStart-withConfig") {
 		maxDownloadConfig=request.data.maxD;
-        nextPageEnableFlag = true;
-    	tSendMsgToCS("firstStart",{});
+		nextPageEnableFlag = true;
+	    tSendMsgToCS("firstStart",{});
 	}else if (request.type == "wolf-catch-pagedata") {
-		
 		totalData.firstAccess = "获取中...";
 		totalData.error = false;
 		totalData.jsonTotalDatas = totalData.jsonTotalDatas
@@ -90,13 +88,14 @@ function bStop() {
 	nextPageEnableFlag=false;
 };
 function bStart() {
-	 /*chrome.storage.sync.get(['maxD'], function(result) {
+//	maxDownloadConfig=maxDownloadConfigLocal;
+/*	 chrome.storage.sync.get(['maxD'], function(result) {
 	        console.log('Value currently is ' + result.maxD);
 	        maxDownloadConfig=result.maxD;
 	        nextPageEnableFlag = true;
 	    	tSendMsgToCS("firstStart",{});
-	      });
-	*/
+	      });*/
+	
 };
 function bResume() {
 	nextPageEnableFlag = true;
@@ -144,21 +143,28 @@ function tCaltulatePageIndex(itemIndex,amountPerPage){
 		return 0;
 	}
 }
+var lastTabId=-1;
 function tSendMsgToCS(msgType,data) {
 	var msg = {};
 	msg.type = msgType;
 	msg.data=data;
-//	chrome.runtime.sendMessage(msg);
-	
-	chrome.tabs.query({
+	if (lastTabId=-1){
+		chrome.tabs.query({
 //		 active : true,
-		currentWindow : true
-	}, function(tabs) {
-		if(tabs.length>0){
-			chrome.tabs.sendMessage(tabs[0].id, msg, function(response) {
-			});
-		}
-	});
+			currentWindow : true
+		}, function(tabs) {
+			if(tabs.length>0){
+				lastTabId=tabs[0].id;
+				chrome.tabs.sendMessage(tabs[0].id, msg, function(response) {
+//			console.log(response.farewell);
+				});
+			}
+		});
+	}else{
+		chrome.tabs.sendMessage(lastTabId, msg, function(response) {
+//			console.log(response.farewell);
+				});
+	}
 };
 function tSendMsgToPopup(msgType,data) {
 	var msg = {};
