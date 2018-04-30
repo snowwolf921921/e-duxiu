@@ -36,7 +36,7 @@ function catchStop(request, sender, sendRequest) {
 		// 取得itemIndex，catch一条并下载，
 		var totalInfoAndCurrentDownloadInfo2 = {};
 		totalInfoAndCurrentDownloadInfo2=request.data;
-		
+		//翻页，重新加载的情况；
 		checkCPageThenCatchAndDownloadOneItem(totalInfoAndCurrentDownloadInfo2);
 	} else if (request.type == "firstStart") {
 		// 获取总体信息，传到bg存储，以这些信息为循环信息
