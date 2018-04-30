@@ -22,7 +22,9 @@ totalData.error = "加载中...";
 //chrome.tabs.onUpdated.addListener(checkForValidUrl);
 chrome.runtime.onMessage.addListener(function(request, sender, sendRequest) {
 	// 获取cs消息组装并记录供下面下载时使用并发送给popup显示
-	if (request.type == "pupupStart-withConfig") {
+	if (request.type == "setBgConfig") {
+		maxDownloadConfig=request.data.maxD;
+	}else if (request.type == "pupupStart-withConfig") {
 		maxDownloadConfig=request.data.maxD;
 		nextPageEnableFlag = true;
 	    tSendMsgToCS("firstStart",{});

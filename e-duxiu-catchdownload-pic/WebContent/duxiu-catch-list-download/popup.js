@@ -19,8 +19,7 @@ function getData() {
 	
 }
 function initClick() {                          
-	document.querySelector('#config').addEventListener(                       
-			'click', setBgConfig);                                                     
+	document.querySelector('#config').addEventListener('click', setBgConfig);                                                     
 	document.querySelector('#bClear').addEventListener(                       
 			'click', bClear);                                                     
 	document.querySelector('#bStop').addEventListener(                       
