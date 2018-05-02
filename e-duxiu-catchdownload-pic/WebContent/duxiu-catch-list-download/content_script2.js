@@ -102,10 +102,10 @@ function creatIframeAndLoadFunc(){
 		var cPicName=t1;
 		if(t1.length>0 || t2.length>0){
 			itemTrInfo.text=t1+"|"+t2+";\n";
-			itemTrInfo.text="n:"+totalInfoAndCurrentDownloadInfo.currentDItemIndexInTotal+
+			/*itemTrInfo.text="n:"+totalInfoAndCurrentDownloadInfo.currentDItemIndexInTotal+
 			";p:"+totalInfoAndCurrentDownloadInfo.currentDPageIndex
-			+";i:"+totalInfoAndCurrentDownloadInfo.currentDItemIndexInPage+"^"
-			+itemTrInfo.text;
+			+";i:"+(totalInfoAndCurrentDownloadInfo.currentDItemIndexInPage+1)+"^"
+			+itemTrInfo.text;*/
 			totalInfoAndCurrentDownloadInfo.itemTrInfo = itemTrInfo.text;
 			totalInfoAndCurrentDownloadInfo.cPicName = cPicName;
 			tSendMessage("currentItemInfo-downloadNextItem",totalInfoAndCurrentDownloadInfo);
@@ -117,6 +117,7 @@ function catchAndDownloadOneItem(totalInfoAndCurrentDownloadInfo2){
 	// 计算item在当页第几项，应该和计算第几页currentDPageIndex放到一起，是否放到bg中？
 	//计数从1开始，页面元素索引从0开始
 	var currentDItemIndexInPage=(totalInfoAndCurrentDownloadInfo2.currentDItemIndexInTotal-1)%totalInfoAndCurrentDownloadInfo2.itemsAmountPerPage;
+	totalInfoAndCurrentDownloadInfo2.currentDItemIndexInPage=currentDItemIndexInPage;
 	// 找到这项并catch
 	// 下面与css相关
 //	var src=$('.book1').eq(currentDItemIndexInPage).find("a[class='px14']").attr("href"); 0416改版了？

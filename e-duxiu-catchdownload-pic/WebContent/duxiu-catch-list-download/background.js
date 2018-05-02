@@ -15,6 +15,7 @@ var totalData = {
 	catchStatus : "无"
 };
 var maxDownloadConfig=-1;
+var displayConfig={};
 //默认可以翻页
 var nextPageEnableFlag = true;
 var intIntervalNextPage;
@@ -24,6 +25,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendRequest) {
 	// 获取cs消息组装并记录供下面下载时使用并发送给popup显示
 	if (request.type == "setBgConfig") {
 		maxDownloadConfig=request.data.maxD;
+		displayConfig=request.data.dConfig;
 	}else if (request.type == "pupupStart-withConfig") {
 		maxDownloadConfig=request.data.maxD;
 		nextPageEnableFlag = true;
@@ -59,10 +61,26 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendRequest) {
 		+"i"+totalInfoAndCurrentDownloadInfo.currentDItemIndexInPage
 		+totalInfoAndCurrentDownloadInfo.cPicName
 		+".jpeg";
-		
 		chrome.downloads.download({url: totalInfoAndCurrentDownloadInfo.cImageUrl,filename:fileName,saveAs: false},function(id) {
 		});
-		totalData.displayData += totalInfoAndCurrentDownloadInfo.itemTrInfo;
+		var itemTrInfoWithNo="";
+		var itemTrInfoNo="";
+		if(dispalyConfig.dNo){
+			itemTrInfoNo+="i:"+(totalInfoAndCurrentDownloadInfo.currentDItemIndexInPage+1)+";";
+		}
+		if(dispalyConfig.dNo){
+			itemTrInfoNo+="p:"+totalInfoAndCurrentDownloadInfo.currentDPageIndex+";";
+		}
+		if(dispalyConfig.dNo){
+			itemTrInfoNo+="n:"+totalInfoAndCurrentDownloadInfo.currentDItemIndexInTota+";";
+		}
+		if(itemTrInfoNo.length>0){
+			itemTrInfoWithNo=itemTrInfoNo+"^"+totalInfoAndCurrentDownloadInfo.itemTrInfo;
+		}else{
+			itemTrInfoWithNo=otalInfoAndCurrentDownloadInfo.itemTrInfo;
+		}
+		totalInfoAndCurrentDownloadInfo.itemTrInfoWithNo=itemTrInfoWithNo;
+		totalData.displayData += totalInfoAndCurrentDownloadInfo.itemTrInfoWithNo;
 		tSendMsgToPopup("popup-displayData");
 		totalInfoAndCurrentDownloadInfo.currentDItemIndexInTotal++;
 		//翻页

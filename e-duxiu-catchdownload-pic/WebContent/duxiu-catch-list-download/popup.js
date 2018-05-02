@@ -36,12 +36,11 @@ function initClick() {
 }
 function setBgConfig(){
 	var maxDownloadConfig=Number($("#maxDownloadConfig").val());
-//	alert(maxDownloadConfig);
-	/*chrome.storage.sync.set({maxD: maxDownloadConfig}, function() {
-        console.log('Value is set to ' + maxDownloadConfig);
-        chrome.extension.getBackgroundPage().bStart();  
-      });*/
-	tSendMsgToBg("setConfig",{maxD:maxDownloadConfig});
+	var displayConfig={};
+	displayConfig.dNo=$("input:checkbox[name='dNo']").is(":checked")
+	displayConfig.dPageNo=$("input:checkbox[name='dPageNo']").is(":checked")
+	displayConfig.dIndexInPage=$("input:checkbox[name='dIndexInPage']").is(":checked")
+	tSendMsgToBg("setBgConfig",{maxD:maxDownloadConfig,dConfig:displayConfig});
 }
 function pBStart(){
 	var maxDownloadConfig=Number($("#maxDownloadConfig").val());
