@@ -25,7 +25,8 @@ var totalInfoAndCurrentDownloadInfo = {
 		currentDItemIndexInTotal : 0,// 1开始
 		currentDItemIndexInPage : 0,// 1开始
 		cImageUrl:"",
-		cPicName:""
+		cPicName:"",
+		displayData:""	
 	};
 var $divIframe;
 var $iframeEmbed;

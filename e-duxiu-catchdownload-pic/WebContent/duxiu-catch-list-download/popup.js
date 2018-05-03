@@ -3,22 +3,24 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendRequest){
 		getData();
 	}else if(request.type=="current-download-item-info"){
 		
-		$("#message").text("正在下载"+request.currentDownloadInfo2.totalNo+"-"+request.currentDownloadInfo2.title); 
+//		$("#message").text("正在下载"+request.data.totalInfoAndCurrentDownloadInfo.currentDItemIndexInTotal+"-"+request.data.totalInfoAndCurrentDownloadInfo.itemTrInfoWithNo); 
 	}else{
 		return;
 	}
 });
 function getData() {                          
 	var totalData = chrome.extension.getBackgroundPage().totalData;     
-	if(totalData.displayData!=null?totalData.displayData.length>0:false){
+	if(totalData.displayData!=null&&totalData.displayData.length){
 		$("#testarea").text(totalData.displayData);
 		$("#message").text(totalData.downloadStatus);
+//		$("#message").text("正在下载"+chrome.extension.getBackgroundPage().totalInfoAndCurrentDownloadInfo.currentDItemIndexInTotal+"-"+chrome.extension.getBackgroundPage().totalInfoAndCurrentDownloadInfo.cPicName+"");
 	}else{
 		//没取到数据
 	}
 	$("#maxDownloadConfig").val(chrome.extension.getBackgroundPage().maxDownloadConfig?chrome.extension.getBackgroundPage().maxDownloadConfig:100);
 	$("#timeP").val(chrome.extension.getBackgroundPage().timeP?chrome.extension.getBackgroundPage().timeP/1000:2);
 	$("#timeI").val(chrome.extension.getBackgroundPage().timeI?chrome.extension.getBackgroundPage().timeI/1000:15);
+	$("#timeRnd").val(chrome.extension.getBackgroundPage().timeRnd?chrome.extension.getBackgroundPage().timeRnd/1000:9);
 	$("#messageD").text("keyWord:"+chrome.extension.getBackgroundPage().totalInfoAndCurrentDownloadInfo.keyword+"; 共"+chrome.extension.getBackgroundPage().totalInfoAndCurrentDownloadInfo.totalItemsAmount+"条"); 
 	
 }
@@ -59,7 +61,7 @@ function getDisplayConfig(){
 	return displayConfig;
 }
 function getTime(){
-	return {p:Number($("#timeP").val())*1000,i:Number($("#timeI").val())*1000}
+	return {p:Number($("#timeP").val())*1000,i:Number($("#timeI").val())*1000,rnd:Number($("#timeRnd").val())*1000}
 }
 
 function initPage() {   

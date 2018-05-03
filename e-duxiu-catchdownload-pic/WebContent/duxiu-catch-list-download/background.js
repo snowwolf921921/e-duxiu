@@ -12,7 +12,9 @@ var currentDownloadInfo2 = {};
 var totalData = {
 	jsonTotalDatas : [],
 	downloadStatus : "无",
-	catchStatus : "无"
+	catchStatus : "无",
+	error :"加载中...",
+	displayData:""	
 };
 var maxDownloadConfig=-1;
 var displayConfig={};
@@ -22,7 +24,8 @@ var intIntervalNextPage;
 //时间间隔
 var timeP=0;
 var timeI=0;
-totalData.error = "加载中...";
+var timeRnd=0;
+var t=-1;
 //chrome.tabs.onUpdated.addListener(checkForValidUrl);
 chrome.runtime.onMessage.addListener(function(request, sender, sendRequest) {
 	// 获取cs消息组装并记录供下面下载时使用并发送给popup显示
@@ -31,11 +34,13 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendRequest) {
 		displayConfig=request.data.dConfig;
 		timeP=request.data.time.p;
 		timeI=request.data.time.i;
+		timeRnd=request.data.time.rnd;
 	}else if (request.type == "pupupStart-withConfig") {
 		maxDownloadConfig=request.data.maxD;
 		displayConfig=request.data.dConfig;
 		timeP=request.data.time.p;
 		timeI=request.data.time.i;
+		timeRnd=request.data.time.rnd;
 		nextPageEnableFlag = true;
 	    tSendMsgToCS("firstStart",{});
 	}else if (request.type == "pupupResume-withConfig") {
@@ -43,6 +48,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendRequest) {
 	    displayConfig=request.data.dConfig;
 	    timeP=request.data.time.p;
 		timeI=request.data.time.i;
+		timeRnd=request.data.time.rnd;
 	    if(checkMax()){
 	    	nextPageEnableFlag = true;
 	    	tSendMsgToCS("msg-catch&downloadThisItem-withTotalInfo",totalInfoAndCurrentDownloadInfo);
@@ -72,8 +78,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendRequest) {
 		+"i"+(totalInfoAndCurrentDownloadInfo.currentDItemIndexInPage+1)
 		+totalInfoAndCurrentDownloadInfo.cPicName
 		+".jpeg";
-		chrome.downloads.download({url: totalInfoAndCurrentDownloadInfo.cImageUrl,filename:fileName,saveAs: false},function(id) {
-		});
+		chrome.downloads.download({url: totalInfoAndCurrentDownloadInfo.cImageUrl,filename:fileName,saveAs: false},function(id) {});
+		
 		var itemTrInfoWithNo="";
 		var itemTrInfoNo="";
 		if(displayConfig.dIndexInPage){
@@ -85,6 +91,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendRequest) {
 		if(displayConfig.dNo){
 			itemTrInfoNo+="i"+(totalInfoAndCurrentDownloadInfo.currentDItemIndexInPage+1)+"";
 		}
+		
 		if(itemTrInfoNo.length>0){
 			itemTrInfoWithNo=itemTrInfoNo+"^"+totalInfoAndCurrentDownloadInfo.itemTrInfo;
 		}else{
@@ -92,17 +99,20 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendRequest) {
 		}
 		totalInfoAndCurrentDownloadInfo.itemTrInfoWithNo=totalInfoAndCurrentDownloadInfo.keyword+":"+totalInfoAndCurrentDownloadInfo.totalItemsAmount+itemTrInfoWithNo;
 		totalData.displayData += totalInfoAndCurrentDownloadInfo.itemTrInfoWithNo;
+		totalData.downloadStatus="已下载："+totalInfoAndCurrentDownloadInfo.itemTrInfoNo+totalInfoAndCurrentDownloadInfo.cPicName;
 		tSendMsgToPopup("popup-displayData");
 		totalInfoAndCurrentDownloadInfo.currentDItemIndexInTotal++;
 		
 		//翻页
 		var bFlagIndexNeedNextPage=tCaltulatePageIndex(totalInfoAndCurrentDownloadInfo.currentDItemIndexInTotal,totalInfoAndCurrentDownloadInfo.itemsAmountPerPage)>totalInfoAndCurrentDownloadInfo.currentDPageIndex;
 		if(checkMax()){
-			if(!(!nextPageEnableFlag&&bFlagIndexNeedNextPage)){
+			if(nextPageEnableFlag&&!bFlagIndexNeedNextPage){
+				var r=tRnd(timeI-timeRnd,timeI+timeRnd);
 				var t=setTimeout(function(){
 					tSendMsgToPopup("popup-displayData");
 					tSendMsgToCS('msg-catch&downloadThisItem-withTotalInfo',totalInfoAndCurrentDownloadInfo);
-				},tRnd(timeI-9000,timeI+9000))
+				},r)
+				totalData.downloadStatus="已下载："+itemTrInfoWithNo+totalInfoAndCurrentDownloadInfo.cPicName+"；已设置延迟"+r/1000+"秒后下载下一条";
 //				tSendMsgToCS('msg-catch&downloadThisItem-withTotalInfo',totalInfoAndCurrentDownloadInfo);
 			}	
 		}
@@ -120,7 +130,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendRequest) {
 			totalInfoAndCurrentDownloadInfo = request.data;
 			//setInterval定时不断执行，setTimeout只执行一次
 			if(timeP){
-				var t=setTimeout(function(){
+				t=setTimeout(function(){
+					
 					tSendMsgToPopup("popup-displayData");
 					tSendMsgToCS('msg-catch&downloadThisItem-withTotalInfo',totalInfoAndCurrentDownloadInfo);
 				},timeP)
@@ -134,6 +145,8 @@ function checkMax(){
 }
 function bStop() {
 	nextPageEnableFlag=false;
+	if (t!=-1){clearTimeout(t); }
+	
 };
 /*chrome.downloads.onDeterminingFilename.addListener(function(item, suggest) {
 	suggest({
@@ -201,6 +214,7 @@ function tSendMsgToCS(msgType,data) {
 	}
 };
 function tSendMsgToPopup(msgType,data) {
+//	totalData.totalInfoAndCurrentDownloadInfo=totalInfoAndCurrentDownloadInfo;
 	var msg = {};
 	msg.type = msgType;
 	msg.data=data;
