@@ -6,8 +6,8 @@ var currentDownloadInfo={};
 var needDownloadList=[];
 
 // html&css 相关变量 与页面相关信息
-
-var tagTotalItemsAmount="#searchinfo b:eq(1)";//文本示例<b>11433 种,用时 0.01 秒</b>
+var tagKeyword="input[name='Book']";//文本示例<b>11433 种,用时 0.01 秒</b>
+var tagTotalItemsAmount="#searchinfo b:eq(0)";//文本示例<b>11433 种,用时 0.01 秒</b>
 //程序使用示例
 //totalItemsAmount=substrStartToIndexofToNumber($(tagTotalItemsAmount).text(),0,'种');
 var itemsAmountPerPage=10;
@@ -48,9 +48,6 @@ function catchStop(request, sender, sendRequest) {
 				currentDItemIndexInTotal:1,// 1开始
 				currentDItemIndexInPage:0,//1开始
 		};
-		totalInfoAndCurrentDownloadInfo2.totalItemsAmount=pGetTotalItemsAmountNumber();
-		// totalCatchjobInfoAndCurrentDownloadInfo.itemsAmountPerPage=Number($(tagTotalItemsAmount));
-		totalInfoAndCurrentDownloadInfo2.itemsAmountPerPage=pGetItemsAmountPerPage();
 		var msg = {};
 		msg.type = "firstStartToBg";
 		msg.data=totalInfoAndCurrentDownloadInfo2;
@@ -66,7 +63,9 @@ chrome.runtime.onMessage.addListener(catchStop);
 //****************把totalInfoAndCurrentDownloadInfo改成全局变量?需要仔细检查
 function checkCPageThenCatchAndDownloadOneItem(totalInfoAndCurrentDownloadInfo2){
 // check current page index ==totalInfoAndCurrentDownloadInfo.pageIndex
-//	totalInfoAndCurrentDownloadInfo=totalInfoAndCurrentDownloadInfo2;
+	totalInfoAndCurrentDownloadInfo2.keyword=pGetKeyword();
+	totalInfoAndCurrentDownloadInfo2.totalItemsAmount=pGetTotalItemsAmountNumber();
+	totalInfoAndCurrentDownloadInfo2.itemsAmountPerPage=pGetItemsAmountPerPage();
 	totalInfoAndCurrentDownloadInfo2.currentDPageIndex= tCaltulatePageIndex(totalInfoAndCurrentDownloadInfo2.currentDItemIndexInTotal,totalInfoAndCurrentDownloadInfo2.itemsAmountPerPage);
 	totalInfoAndCurrentDownloadInfo=totalInfoAndCurrentDownloadInfo2;
 	//
@@ -215,6 +214,9 @@ function tSubstrStartToIndexofToNumber(sourceStr,start,indexStr){
 }
 function pGetTotalItemsAmountNumber(){
 	return tSubstrStartToIndexofToNumber($(tagTotalItemsAmount).text(),0,'种');
+}
+function pGetKeyword(){
+	return $(tagKeyword).val();
 }
 function pGetItemsAmountPerPage(){
 	return itemsAmountPerPage;

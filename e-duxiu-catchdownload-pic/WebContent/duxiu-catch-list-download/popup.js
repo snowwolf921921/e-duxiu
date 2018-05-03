@@ -16,6 +16,10 @@ function getData() {
 	}else{
 		//没取到数据
 	}
+	$("#maxDownloadConfig").val(chrome.extension.getBackgroundPage().maxDownloadConfig?chrome.extension.getBackgroundPage().maxDownloadConfig:100);
+	$("#timeP").val(chrome.extension.getBackgroundPage().timeP?chrome.extension.getBackgroundPage().timeP/1000:2);
+	$("#timeI").val(chrome.extension.getBackgroundPage().timeI?chrome.extension.getBackgroundPage().timeI/1000:15);
+	$("#messageD").text("keyWord:"+chrome.extension.getBackgroundPage().totalInfoAndCurrentDownloadInfo.keyword+"; 共"+chrome.extension.getBackgroundPage().totalInfoAndCurrentDownloadInfo.totalItemsAmount+"条"); 
 	
 }
 function initClick() {                          
@@ -63,8 +67,6 @@ function initPage() {
 	getData();
 }
 
-
-
 function bCheck() {
 	var result = chrome.extension.getBackgroundPage().totalData.jsonTotalDatas;	
 	//jsonTotalDatas 格式 [{row},{}..]
@@ -83,16 +85,12 @@ function bCheck() {
 				loseRows+=j+",";
 			}
 		}
-		
 	};
 	if (loseRows.length==0){
 		$("#message").text("数据完整"); 
 	}else{
 		$("#message").text("缺少如下数据："+loseRows); 
 	}
-	
-	
-	
 }
 function utf8_to_b64( str ) {
     return window.btoa(unescape(encodeURIComponent( str )));
@@ -109,7 +107,6 @@ function bExport() {
 		      height: 600
 		    }
 		  });*/
-
     // Save as file
     var url = 'data:application/txt;base64,' + utf8_to_b64(result);
     chrome.downloads.download({

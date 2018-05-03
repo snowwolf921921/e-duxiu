@@ -67,7 +67,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendRequest) {
 		tSendMsgToCS('msg-catch&downloadThisItem-withTotalInfo',totalInfoAndCurrentDownloadInfo);
 	} else if (request.type == "currentItemInfo-downloadNextItem") {
 		totalInfoAndCurrentDownloadInfo = request.data;
-		var fileName="n"+totalInfoAndCurrentDownloadInfo.currentDItemIndexInTotal+
+		var fileName=totalInfoAndCurrentDownloadInfo.keyword+""+totalInfoAndCurrentDownloadInfo.totalItemsAmount+"n"+totalInfoAndCurrentDownloadInfo.currentDItemIndexInTotal+
 		"p"+totalInfoAndCurrentDownloadInfo.currentDPageIndex
 		+"i"+(totalInfoAndCurrentDownloadInfo.currentDItemIndexInPage+1)
 		+totalInfoAndCurrentDownloadInfo.cPicName
@@ -90,7 +90,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendRequest) {
 		}else{
 			itemTrInfoWithNo=otalInfoAndCurrentDownloadInfo.itemTrInfo;
 		}
-		totalInfoAndCurrentDownloadInfo.itemTrInfoWithNo=itemTrInfoWithNo;
+		totalInfoAndCurrentDownloadInfo.itemTrInfoWithNo=totalInfoAndCurrentDownloadInfo.keyword+":"+totalInfoAndCurrentDownloadInfo.totalItemsAmount+itemTrInfoWithNo;
 		totalData.displayData += totalInfoAndCurrentDownloadInfo.itemTrInfoWithNo;
 		tSendMsgToPopup("popup-displayData");
 		totalInfoAndCurrentDownloadInfo.currentDItemIndexInTotal++;
@@ -102,7 +102,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendRequest) {
 				var t=setTimeout(function(){
 					tSendMsgToPopup("popup-displayData");
 					tSendMsgToCS('msg-catch&downloadThisItem-withTotalInfo',totalInfoAndCurrentDownloadInfo);
-				},timeI)
+				},tRnd(timeI-9000,timeI+9000))
 //				tSendMsgToCS('msg-catch&downloadThisItem-withTotalInfo',totalInfoAndCurrentDownloadInfo);
 			}	
 		}
@@ -206,4 +206,9 @@ function tSendMsgToPopup(msgType,data) {
 	msg.data=data;
 	chrome.runtime.sendMessage(msg);
 };
+function tRnd(n, m){
+    var random = Math.floor(Math.random()*(m-n+1)+n);
+    return random;
+}
+
 
