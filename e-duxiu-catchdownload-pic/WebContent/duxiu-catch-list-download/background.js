@@ -99,7 +99,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendRequest) {
 		}
 		totalInfoAndCurrentDownloadInfo.itemTrInfoWithNo=totalInfoAndCurrentDownloadInfo.keyword+":"+totalInfoAndCurrentDownloadInfo.totalItemsAmount+itemTrInfoWithNo;
 		totalData.displayData += totalInfoAndCurrentDownloadInfo.itemTrInfoWithNo;
-		totalData.downloadStatus="已下载："+totalInfoAndCurrentDownloadInfo.itemTrInfoNo+totalInfoAndCurrentDownloadInfo.cPicName;
+		totalData.downloadStatus="已下载："+itemTrInfoNo+totalInfoAndCurrentDownloadInfo.cPicName;
 		tSendMsgToPopup("popup-displayData");
 		totalInfoAndCurrentDownloadInfo.currentDItemIndexInTotal++;
 		
@@ -112,7 +112,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendRequest) {
 					tSendMsgToPopup("popup-displayData");
 					tSendMsgToCS('msg-catch&downloadThisItem-withTotalInfo',totalInfoAndCurrentDownloadInfo);
 				},r)
-				totalData.downloadStatus="已下载："+itemTrInfoWithNo+totalInfoAndCurrentDownloadInfo.cPicName+"；已设置延迟"+r/1000+"秒后下载下一条";
+				totalData.downloadStatus="已下载："+itemTrInfoNo+totalInfoAndCurrentDownloadInfo.cPicName+"；已设置延迟"+r/1000+"秒后下载下一条";
 //				tSendMsgToCS('msg-catch&downloadThisItem-withTotalInfo',totalInfoAndCurrentDownloadInfo);
 			}	
 		}

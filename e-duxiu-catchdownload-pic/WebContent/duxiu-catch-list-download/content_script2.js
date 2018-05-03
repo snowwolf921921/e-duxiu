@@ -90,7 +90,7 @@ function checkCPageThenCatchAndDownloadOneItem(totalInfoAndCurrentDownloadInfo2)
 } 
 //return the div jquery object that include the iframe
 function creatIframeAndLoadFunc(){
-	$divIframe = $( "<div id='divIframe' style='position:absolute;top:500px;left:700px;'></div>" );
+	$divIframe = $( "<div id='divIframe' style='position:absolute;top:500px;left:700px;overflow: scroll; border: 1px solid;'></div>" );
 	$iframeEmbed = $( "<iframe id='embedIframe' border='2px' height='1000px' width='1000px' display='inline'></iframe>" );
 	$iframeEmbed.attr("src","http://book.duxiu.com/bookDetail.jsp?dxNumber=000001024326&d=6AC52643FD37FE591EF8EFCF8745F095&fenlei=070306091501")
     $divIframe.append($iframeEmbed);
@@ -99,9 +99,15 @@ function creatIframeAndLoadFunc(){
 		var itemTrInfo={};
 		var t1=$iframeEmbed.contents().find('.card_text dl dt').text().trim();
 		var t2=$iframeEmbed.contents().find('.card_text dl dd').eq(0).text().trim();
+		var t3=$iframeEmbed.contents().find('.card_text dl dd').eq(1).text().trim();
+		var t4=$iframeEmbed.contents().find('.card_text dl dd').eq(2).text().trim();
 		var cPicName=t1;
 		if(t1.length>0 || t2.length>0){
-			itemTrInfo.text=t1+"|"+t2+";\n";
+			itemTrInfo.text=t1
+							+"|"+removeHTMLTag(t2)
+							+"|"+removeHTMLTag(t3)
+							+"|"+removeHTMLTag(t4)
+							+";\n";
 			/*itemTrInfo.text="n:"+totalInfoAndCurrentDownloadInfo.currentDItemIndexInTotal+
 			";p:"+totalInfoAndCurrentDownloadInfo.currentDPageIndex
 			+";i:"+(totalInfoAndCurrentDownloadInfo.currentDItemIndexInPage+1)+"^"
@@ -149,9 +155,17 @@ function tCaltulatePageIndex(itemIndex,amountPerPage){
 }
 
 function removeHTMLTag(str) {
-	str = str	; // 去除HTML tag
+//	去除所有空格:   
+		str   =   str.replace(/\s+/g,"");       
+//		去除两头空格:   
+//		str   =   str.replace(/^\s+|\s+$/g,"");
+//		去除左空格：
+//		str=str.replace( /^\s*/, '');
+//		去除右空格：
+//		str=str.replace(/(\s*$)/g, "");
+	
 	str = str.replace(/[ | ]*\n/g, '\n'); // 去除行尾空白
-	// str = str.replace(/\n[\s| | ]*\r/g,'\n'); //去除多余空行
+	str = str.replace(/\n[\s| | ]*\r/g,'\n'); //去除多余空行
 	str = str.replace(/ /ig, '');// 去掉
 	return str;
 }
