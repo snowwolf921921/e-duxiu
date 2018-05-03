@@ -36,22 +36,27 @@ function initClick() {
 }
 function setBgConfig(){
 	var maxDownloadConfig=Number($("#maxDownloadConfig").val());
+	tSendMsgToBg("setBgConfig",{maxD:maxDownloadConfig,dConfig:getDisplayConfig(),time:getTime()});
+}
+function pBStart(){
+	var maxDownloadConfig=Number($("#maxDownloadConfig").val());
+	 tSendMsgToBg("pupupStart-withConfig",{maxD:maxDownloadConfig,dConfig:getDisplayConfig(),time:getTime()});
+}
+function pBResume(){
+	var maxDownloadConfig=Number($("#maxDownloadConfig").val());
+	tSendMsgToBg("pupupResume-withConfig",{maxD:maxDownloadConfig,dConfig:getDisplayConfig(),time:getTime()});
+}
+
+function getDisplayConfig(){
 	var displayConfig={};
 	displayConfig.dNo=$("input:checkbox[name='dNo']").is(":checked")
 	displayConfig.dPageNo=$("input:checkbox[name='dPageNo']").is(":checked")
 	displayConfig.dIndexInPage=$("input:checkbox[name='dIndexInPage']").is(":checked")
-	tSendMsgToBg("setBgConfig",{maxD:maxDownloadConfig,dConfig:displayConfig});
+	return displayConfig;
 }
-function pBStart(){
-	var maxDownloadConfig=Number($("#maxDownloadConfig").val());
-	 tSendMsgToBg("pupupStart-withConfig",{maxD:maxDownloadConfig});
+function getTime(){
+	return {p:Number($("#timeP").val())*1000,i:Number($("#timeI").val())*1000}
 }
-function pBResume(){
-	var maxDownloadConfig=Number($("#maxDownloadConfig").val());
-	tSendMsgToBg("pupupResume-withConfig",{maxD:maxDownloadConfig});
-}
-
-
 
 function initPage() {   
 	initClick();

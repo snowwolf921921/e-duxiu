@@ -19,6 +19,9 @@ var displayConfig={};
 //默认可以翻页
 var nextPageEnableFlag = true;
 var intIntervalNextPage;
+//时间间隔
+var timeP=0;
+var timeI=0;
 totalData.error = "加载中...";
 //chrome.tabs.onUpdated.addListener(checkForValidUrl);
 chrome.runtime.onMessage.addListener(function(request, sender, sendRequest) {
@@ -26,12 +29,20 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendRequest) {
 	if (request.type == "setBgConfig") {
 		maxDownloadConfig=request.data.maxD;
 		displayConfig=request.data.dConfig;
+		timeP=request.data.time.p;
+		timeI=request.data.time.i;
 	}else if (request.type == "pupupStart-withConfig") {
 		maxDownloadConfig=request.data.maxD;
+		displayConfig=request.data.dConfig;
+		timeP=request.data.time.p;
+		timeI=request.data.time.i;
 		nextPageEnableFlag = true;
 	    tSendMsgToCS("firstStart",{});
 	}else if (request.type == "pupupResume-withConfig") {
 	    maxDownloadConfig=request.data.maxD;
+	    displayConfig=request.data.dConfig;
+	    timeP=request.data.time.p;
+		timeI=request.data.time.i;
 	    if(checkMax()){
 	    	nextPageEnableFlag = true;
 	    	tSendMsgToCS("msg-catch&downloadThisItem-withTotalInfo",totalInfoAndCurrentDownloadInfo);
@@ -58,21 +69,21 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendRequest) {
 		totalInfoAndCurrentDownloadInfo = request.data;
 		var fileName="n"+totalInfoAndCurrentDownloadInfo.currentDItemIndexInTotal+
 		"p"+totalInfoAndCurrentDownloadInfo.currentDPageIndex
-		+"i"+totalInfoAndCurrentDownloadInfo.currentDItemIndexInPage
+		+"i"+(totalInfoAndCurrentDownloadInfo.currentDItemIndexInPage+1)
 		+totalInfoAndCurrentDownloadInfo.cPicName
 		+".jpeg";
 		chrome.downloads.download({url: totalInfoAndCurrentDownloadInfo.cImageUrl,filename:fileName,saveAs: false},function(id) {
 		});
 		var itemTrInfoWithNo="";
 		var itemTrInfoNo="";
-		if(dispalyConfig.dNo){
-			itemTrInfoNo+="i:"+(totalInfoAndCurrentDownloadInfo.currentDItemIndexInPage+1)+";";
+		if(displayConfig.dIndexInPage){
+			itemTrInfoNo+="n"+totalInfoAndCurrentDownloadInfo.currentDItemIndexInTotal+"";
 		}
-		if(dispalyConfig.dNo){
-			itemTrInfoNo+="p:"+totalInfoAndCurrentDownloadInfo.currentDPageIndex+";";
+		if(displayConfig.dPageNo){
+			itemTrInfoNo+="p"+totalInfoAndCurrentDownloadInfo.currentDPageIndex+"";
 		}
-		if(dispalyConfig.dNo){
-			itemTrInfoNo+="n:"+totalInfoAndCurrentDownloadInfo.currentDItemIndexInTota+";";
+		if(displayConfig.dNo){
+			itemTrInfoNo+="i"+(totalInfoAndCurrentDownloadInfo.currentDItemIndexInPage+1)+"";
 		}
 		if(itemTrInfoNo.length>0){
 			itemTrInfoWithNo=itemTrInfoNo+"^"+totalInfoAndCurrentDownloadInfo.itemTrInfo;
@@ -83,11 +94,16 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendRequest) {
 		totalData.displayData += totalInfoAndCurrentDownloadInfo.itemTrInfoWithNo;
 		tSendMsgToPopup("popup-displayData");
 		totalInfoAndCurrentDownloadInfo.currentDItemIndexInTotal++;
+		
 		//翻页
 		var bFlagIndexNeedNextPage=tCaltulatePageIndex(totalInfoAndCurrentDownloadInfo.currentDItemIndexInTotal,totalInfoAndCurrentDownloadInfo.itemsAmountPerPage)>totalInfoAndCurrentDownloadInfo.currentDPageIndex;
 		if(checkMax()){
 			if(!(!nextPageEnableFlag&&bFlagIndexNeedNextPage)){
-				tSendMsgToCS('msg-catch&downloadThisItem-withTotalInfo',totalInfoAndCurrentDownloadInfo);
+				var t=setTimeout(function(){
+					tSendMsgToPopup("popup-displayData");
+					tSendMsgToCS('msg-catch&downloadThisItem-withTotalInfo',totalInfoAndCurrentDownloadInfo);
+				},timeI)
+//				tSendMsgToCS('msg-catch&downloadThisItem-withTotalInfo',totalInfoAndCurrentDownloadInfo);
 			}	
 		}
 	} else if (request.type == "currentItemInfo-waitdownload") {
@@ -103,10 +119,12 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendRequest) {
 		if(nextPageEnableFlag){
 			totalInfoAndCurrentDownloadInfo = request.data;
 			//setInterval定时不断执行，setTimeout只执行一次
-			var t=setTimeout(function(){
-				tSendMsgToPopup("popup-displayData");
-				tSendMsgToCS('msg-catch&downloadThisItem-withTotalInfo',totalInfoAndCurrentDownloadInfo);
-			},2000)
+			if(timeP){
+				var t=setTimeout(function(){
+					tSendMsgToPopup("popup-displayData");
+					tSendMsgToCS('msg-catch&downloadThisItem-withTotalInfo',totalInfoAndCurrentDownloadInfo);
+				},timeP)
+			}
 		}
 	}
 });
