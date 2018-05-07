@@ -1,5 +1,5 @@
 body {
-	width: 620px;
+	width: 700px;
 	overflow: scroll; border: 1px solid;
 }
 table {
@@ -21,4 +21,7 @@ td.item-name{
 	white-space:nowrap;
 	text-overflow:ellipsis;
 	overflow:scroll
+}
+input[type="text"] {
+	width:50px;
 }

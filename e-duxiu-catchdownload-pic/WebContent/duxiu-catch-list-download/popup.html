@@ -15,7 +15,8 @@
 	</span>
 	<input type="checkbox" name="dNo" value="dNo" checked="checked"> 显示总编号
 	<input type="checkbox" name="dPageNo" value="dPageNo" checked="checked"> 显示页号
-	<input type="checkbox" name="dIndexInPage" value="dIndexInPage" checked="checked"> 页内编号
+	<input type="checkbox" name="dIndexInPage" value="dIndexInPage" checked="checked"> 显示页内编号
+	<input type="checkbox" name="dKeywordAndNo" value="dKeywordAndNo" checked="checked"> 显示查询词及数量
 	<div>
 	 翻页延迟<input type="text" id="timeP" />秒
 	 每项延迟<input type="text" id="timeI" />秒
@@ -30,12 +31,10 @@
 			onclick="bStop();">暂停</button>
 		<button id="bStart" type="button" class="button" value="开始">开始</button>
 		<button id="bResume" type="button" class="button" value="继续">继续</button>
-		<button id="bCheck" type="button" class="button" value="检查"
-			onclick="bCheck();">检查</button>
+		<!-- <button id="bCheck" type="button" class="button" value="检查"onclick="bCheck();">检查</button> -->
 		<button id="bExport" type="button" class="button" value="导出"
 			onclick="bExport();">导出</button>
-		<button id="bExportJson" type="button" class="button" value="导出Json"
-			onclick="bExportJson();">导出json</button>
+		<!-- <button id="bExportJson" type="button" class="button" value="导出Json" onclick="bExportJson();">导出json</button> -->
 		<table>
 			<tbody>
 				<tr>

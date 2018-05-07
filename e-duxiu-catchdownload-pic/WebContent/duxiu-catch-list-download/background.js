@@ -35,13 +35,14 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendRequest) {
 		timeP=request.data.time.p;
 		timeI=request.data.time.i;
 		timeRnd=request.data.time.rnd;
+//		nextPageEnableFlag = true;
 	}else if (request.type == "pupupStart-withConfig") {
 		maxDownloadConfig=request.data.maxD;
 		displayConfig=request.data.dConfig;
 		timeP=request.data.time.p;
 		timeI=request.data.time.i;
 		timeRnd=request.data.time.rnd;
-		nextPageEnableFlag = true;
+//		nextPageEnableFlag = true;
 	    tSendMsgToCS("firstStart",{});
 	}else if (request.type == "pupupResume-withConfig") {
 	    maxDownloadConfig=request.data.maxD;
@@ -95,9 +96,13 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendRequest) {
 		if(itemTrInfoNo.length>0){
 			itemTrInfoWithNo=itemTrInfoNo+"^"+totalInfoAndCurrentDownloadInfo.itemTrInfo;
 		}else{
-			itemTrInfoWithNo=otalInfoAndCurrentDownloadInfo.itemTrInfo;
+			itemTrInfoWithNo=totalInfoAndCurrentDownloadInfo.itemTrInfo;
 		}
-		totalInfoAndCurrentDownloadInfo.itemTrInfoWithNo=totalInfoAndCurrentDownloadInfo.keyword+":"+totalInfoAndCurrentDownloadInfo.totalItemsAmount+itemTrInfoWithNo;
+		var keywordAndNo=""
+		if(displayConfig.dKeywordAndNo){
+			keywordAndNo=totalInfoAndCurrentDownloadInfo.keyword+":"+totalInfoAndCurrentDownloadInfo.totalItemsAmount
+		}
+		totalInfoAndCurrentDownloadInfo.itemTrInfoWithNo=keywordAndNo+itemTrInfoWithNo;
 		totalData.displayData += totalInfoAndCurrentDownloadInfo.itemTrInfoWithNo;
 		totalData.downloadStatus="已下载："+itemTrInfoNo+totalInfoAndCurrentDownloadInfo.cPicName;
 		tSendMsgToPopup("popup-displayData");
@@ -106,7 +111,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendRequest) {
 		//翻页
 		var bFlagIndexNeedNextPage=tCaltulatePageIndex(totalInfoAndCurrentDownloadInfo.currentDItemIndexInTotal,totalInfoAndCurrentDownloadInfo.itemsAmountPerPage)>totalInfoAndCurrentDownloadInfo.currentDPageIndex;
 		if(checkMax()){
-			if(nextPageEnableFlag&&!bFlagIndexNeedNextPage){
+			if(nextPageEnableFlag){
+//			!bFlagIndexNeedNextPage
 				var r=tRnd(timeI-timeRnd,timeI+timeRnd);
 				var t=setTimeout(function(){
 					tSendMsgToPopup("popup-displayData");
@@ -141,6 +147,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendRequest) {
 });
 
 function checkMax(){
+//没到最大返回true
 	return (maxDownloadConfig==-1||maxDownloadConfig=="")?true:totalInfoAndCurrentDownloadInfo.currentDItemIndexInTotal<=maxDownloadConfig
 }
 function bStop() {

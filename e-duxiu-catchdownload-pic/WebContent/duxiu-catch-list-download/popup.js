@@ -58,6 +58,7 @@ function getDisplayConfig(){
 	displayConfig.dNo=$("input:checkbox[name='dNo']").is(":checked")
 	displayConfig.dPageNo=$("input:checkbox[name='dPageNo']").is(":checked")
 	displayConfig.dIndexInPage=$("input:checkbox[name='dIndexInPage']").is(":checked")
+	displayConfig.dKeywordAndNo=$("input:checkbox[name='dKeywordAndNo']").is(":checked")
 	return displayConfig;
 }
 function getTime(){

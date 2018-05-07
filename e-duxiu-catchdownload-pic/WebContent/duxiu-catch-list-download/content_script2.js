@@ -98,24 +98,18 @@ function creatIframeAndLoadFunc(){
 	$iframeEmbed.load(function(){
 		var itemTrInfo={};
 		var t1=$iframeEmbed.contents().find('.card_text dl dt').text().trim();
-		var t2=$iframeEmbed.contents().find('.card_text dl dd').eq(0).text().trim();
+		/*var t2=$iframeEmbed.contents().find('.card_text dl dd').eq(0).text().trim();
 		var t3=$iframeEmbed.contents().find('.card_text dl dd').eq(1).text().trim();
-		var t4=$iframeEmbed.contents().find('.card_text dl dd').eq(2).text().trim();
+		var t4=$iframeEmbed.contents().find('.card_text dl dd').eq(2).text().trim();*/
+		itemTrInfo.text=t1
+		$iframeEmbed.contents().find('.card_text dl dd:not(.bnt_content)').each(function(){
+			itemTrInfo.text+="|"+(removeHTMLTag($(this).text().trim()).length>0?removeHTMLTag($(this).text().trim()):"");
+		})
+		itemTrInfo.text+=";\n";
 		var cPicName=t1;
-		if(t1.length>0 || t2.length>0){
-			itemTrInfo.text=t1
-							+"|"+removeHTMLTag(t2)
-							+"|"+removeHTMLTag(t3)
-							+"|"+removeHTMLTag(t4)
-							+";\n";
-			/*itemTrInfo.text="n:"+totalInfoAndCurrentDownloadInfo.currentDItemIndexInTotal+
-			";p:"+totalInfoAndCurrentDownloadInfo.currentDPageIndex
-			+";i:"+(totalInfoAndCurrentDownloadInfo.currentDItemIndexInPage+1)+"^"
-			+itemTrInfo.text;*/
-			totalInfoAndCurrentDownloadInfo.itemTrInfo = itemTrInfo.text;
-			totalInfoAndCurrentDownloadInfo.cPicName = cPicName;
-			tSendMessage("currentItemInfo-downloadNextItem",totalInfoAndCurrentDownloadInfo);
-		}
+		totalInfoAndCurrentDownloadInfo.itemTrInfo = itemTrInfo.text;
+		totalInfoAndCurrentDownloadInfo.cPicName = cPicName;
+		tSendMessage("currentItemInfo-downloadNextItem",totalInfoAndCurrentDownloadInfo);
 	});
 }
 function catchAndDownloadOneItem(totalInfoAndCurrentDownloadInfo2){
