@@ -33,12 +33,10 @@ function initClick() {
 	
 	document.querySelector('#bStart').addEventListener('click', pBStart);                                                     
 	document.querySelector('#bResume').addEventListener('click', pBResume);                                                     
-	document.querySelector('#bCheck').addEventListener(                       
-			'click', bCheck);                                                     
+//	document.querySelector('#bCheck').addEventListener('click', bCheck);                                                     
 	document.querySelector('#bExport').addEventListener(                       
 			'click', bExport);                                                     
-	document.querySelector('#bExportJson').addEventListener(                       
-			'click', bExportJson);                                                     
+//	document.querySelector('#bExportJson').addEventListener('click', bExportJson);                                                     
 }
 function setBgConfig(){
 	var maxDownloadConfig=Number($("#maxDownloadConfig").val());
