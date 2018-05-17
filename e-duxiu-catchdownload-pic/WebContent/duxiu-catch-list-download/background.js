@@ -17,6 +17,7 @@ var totalData = {
 	displayData:""	
 };
 var maxDownloadConfig=-1;
+var startDownloadConfig=-1;
 var displayConfig={};
 //默认可以翻页
 var nextPageEnableFlag = true;
@@ -31,6 +32,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendRequest) {
 	// 获取cs消息组装并记录供下面下载时使用并发送给popup显示
 	if (request.type == "setBgConfig") {
 		maxDownloadConfig=request.data.maxD;
+		startDownloadConfig=request.data.startD;
 		displayConfig=request.data.dConfig;
 		timeP=request.data.time.p;
 		timeI=request.data.time.i;
@@ -38,14 +40,16 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendRequest) {
 //		nextPageEnableFlag = true;
 	}else if (request.type == "pupupStart-withConfig") {
 		maxDownloadConfig=request.data.maxD;
+		startDownloadConfig=request.data.startD;
 		displayConfig=request.data.dConfig;
 		timeP=request.data.time.p;
 		timeI=request.data.time.i;
 		timeRnd=request.data.time.rnd;
 //		nextPageEnableFlag = true;
-	    tSendMsgToCS("firstStart",{});
+	    tSendMsgToCS("firstStart",{startDownloadConfig:startDownloadConfig});
 	}else if (request.type == "pupupResume-withConfig") {
 	    maxDownloadConfig=request.data.maxD;
+	    startDownloadConfig=request.data.startD;
 	    displayConfig=request.data.dConfig;
 	    timeP=request.data.time.p;
 		timeI=request.data.time.i;
@@ -67,7 +71,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendRequest) {
 		//第一次接收，放入本地变量存储：
 		totalInfoAndCurrentDownloadInfo=request.data;
 		totalInfoAndCurrentDownloadInfo.currentDPageIndex=1;
-		totalInfoAndCurrentDownloadInfo.currentDItemIndexInTotal=1;
+		totalInfoAndCurrentDownloadInfo.currentDItemIndexInTotal=startDownloadConfig;
 		totalInfoAndCurrentDownloadInfo.currentDItemIndexInPage=1;
 		//totalItemsAmount 已经在cs页中放入了
 		//通知cs下载第一条；

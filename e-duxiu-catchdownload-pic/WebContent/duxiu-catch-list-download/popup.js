@@ -1,8 +1,9 @@
 chrome.runtime.onMessage.addListener(function(request, sender, sendRequest){
 	if(request.type=="popup-displayData"){
 		getData();
+	}else if(request.type=="popup-displayThisInfo"){
+		$("#message").text(request.data.info);
 	}else if(request.type=="current-download-item-info"){
-		
 //		$("#message").text("正在下载"+request.data.totalInfoAndCurrentDownloadInfo.currentDItemIndexInTotal+"-"+request.data.totalInfoAndCurrentDownloadInfo.itemTrInfoWithNo); 
 	}else{
 		return;
@@ -18,6 +19,7 @@ function getData() {
 		//没取到数据
 	}
 	$("#maxDownloadConfig").val(chrome.extension.getBackgroundPage().maxDownloadConfig?chrome.extension.getBackgroundPage().maxDownloadConfig:100);
+	$("#startDownloadConfig").val(chrome.extension.getBackgroundPage().startDownloadConfig?chrome.extension.getBackgroundPage().startDownloadConfig:1);
 	$("#timeP").val(chrome.extension.getBackgroundPage().timeP?chrome.extension.getBackgroundPage().timeP/1000:2);
 	$("#timeI").val(chrome.extension.getBackgroundPage().timeI?chrome.extension.getBackgroundPage().timeI/1000:15);
 	$("#timeRnd").val(chrome.extension.getBackgroundPage().timeRnd?chrome.extension.getBackgroundPage().timeRnd/1000:9);
@@ -40,11 +42,13 @@ function initClick() {
 }
 function setBgConfig(){
 	var maxDownloadConfig=Number($("#maxDownloadConfig").val());
-	tSendMsgToBg("setBgConfig",{maxD:maxDownloadConfig,dConfig:getDisplayConfig(),time:getTime()});
+	var startDownloadConfig=Number($("#startDownloadConfig").val());
+	tSendMsgToBg("setBgConfig",{maxD:maxDownloadConfig,startD:startDownloadConfig,dConfig:getDisplayConfig(),time:getTime()});
 }
 function pBStart(){
 	var maxDownloadConfig=Number($("#maxDownloadConfig").val());
-	 tSendMsgToBg("pupupStart-withConfig",{maxD:maxDownloadConfig,dConfig:getDisplayConfig(),time:getTime()});
+	var startDownloadConfig=Number($("#startDownloadConfig").val());
+	 tSendMsgToBg("pupupStart-withConfig",{maxD:maxDownloadConfig,startD:startDownloadConfig,dConfig:getDisplayConfig(),time:getTime()});
 }
 function pBResume(){
 	var maxDownloadConfig=Number($("#maxDownloadConfig").val());

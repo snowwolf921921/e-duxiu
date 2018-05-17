@@ -39,14 +39,15 @@ function catchStop(request, sender, sendRequest) {
 		totalInfoAndCurrentDownloadInfo2=request.data;
 		//翻页，重新加载的情况；
 		checkCPageThenCatchAndDownloadOneItem(totalInfoAndCurrentDownloadInfo2);
-	} else if (request.type == "firstStart") {
+	} else if (request.type == "firstStart") {//可以删除
+		var startDownloadConfig=request.data.startDownloadConfig;
 		// 获取总体信息，传到bg存储，以这些信息为循环信息
 		var totalInfoAndCurrentDownloadInfo2={
 				totalItemsAmount : 0,
 				totalPagesAmount : 0 ,
 				itemsAmountPerPage:0,
 				currentDPageIndex:1,  // 1开始
-				currentDItemIndexInTotal:1,// 1开始
+				currentDItemIndexInTotal:startDownloadConfig,
 				currentDItemIndexInPage:0,//1开始
 		};
 		var msg = {};
@@ -85,31 +86,37 @@ function checkCPageThenCatchAndDownloadOneItem(totalInfoAndCurrentDownloadInfo2)
 		// 放到bg 过一段时间等cs翻完页在，bg 向cs发消息继续抓取
 		// 考虑翻页不成功情况？通知bg？记录如较长时间没有到下个item，通知cs重新下载，并记录问题;
 	}else {
-		alert("当前要下载的项不在当前页中或下一页！")
+		alert("要下载的第"+totalInfoAndCurrentDownloadInfo2.currentDItemIndexInTotal+"不在当前页中");
 	}	
 } 
 //return the div jquery object that include the iframe
 function creatIframeAndLoadFunc(){
-	$divIframe = $( "<div id='divIframe' style='position:absolute;top:500px;left:700px;overflow: scroll; border: 1px solid;'></div>" );
+	$divIframe = $( "<div id='divIframe' style='position:absolute;top:900px;left:100px;overflow: scroll; border: 1px solid;'></div>" );
 	$iframeEmbed = $( "<iframe id='embedIframe' border='2px' height='1000px' width='1000px' display='inline'></iframe>" );
 	$iframeEmbed.attr("src","http://book.duxiu.com/bookDetail.jsp?dxNumber=000001024326&d=6AC52643FD37FE591EF8EFCF8745F095&fenlei=070306091501")
     $divIframe.append($iframeEmbed);
 	$("body").append($divIframe);
 	$iframeEmbed.load(function(){
 		var itemTrInfo={};
-		var t1=$iframeEmbed.contents().find('.card_text dl dt').text().trim();
+		var t1="";
+		t1=$iframeEmbed.contents().find('.card_text dl dt').text().trim();
 		/*var t2=$iframeEmbed.contents().find('.card_text dl dd').eq(0).text().trim();
 		var t3=$iframeEmbed.contents().find('.card_text dl dd').eq(1).text().trim();
 		var t4=$iframeEmbed.contents().find('.card_text dl dd').eq(2).text().trim();*/
-		itemTrInfo.text=t1
-		$iframeEmbed.contents().find('.card_text dl dd:not(.bnt_content)').each(function(){
-			itemTrInfo.text+="|"+(removeHTMLTag($(this).text().trim()).length>0?removeHTMLTag($(this).text().trim()):"");
-		})
-		itemTrInfo.text+=";\n";
-		var cPicName=t1;
-		totalInfoAndCurrentDownloadInfo.itemTrInfo = itemTrInfo.text;
-		totalInfoAndCurrentDownloadInfo.cPicName = cPicName;
-		tSendMessage("currentItemInfo-downloadNextItem",totalInfoAndCurrentDownloadInfo);
+		if(t1.length>0){
+			itemTrInfo.text=t1
+			$iframeEmbed.contents().find('.card_text dl dd:not(.bnt_content)').each(function(){
+				itemTrInfo.text+="|"+(removeHTMLTag($(this).text().trim()).length>0?removeHTMLTag($(this).text().trim()):"");
+			})
+			itemTrInfo.text+=";\n";
+			var cPicName=t1;
+			totalInfoAndCurrentDownloadInfo.itemTrInfo = itemTrInfo.text;
+			totalInfoAndCurrentDownloadInfo.cPicName = cPicName;
+			tSendMessage("currentItemInfo-downloadNextItem",totalInfoAndCurrentDownloadInfo);
+		}else{
+			//没取到标题信息，很大可能是出现了验证码
+			tSendMsgToPopup("popup-displayThisInfo",{info:"没取到标题信息，很大可能是出现了验证码"});
+		}
 	});
 }
 function catchAndDownloadOneItem(totalInfoAndCurrentDownloadInfo2){
@@ -134,6 +141,13 @@ function catchAndDownloadOneItem(totalInfoAndCurrentDownloadInfo2){
 	
 	
 }
+function tSendMsgToPopup(msgType,data) {
+//	totalData.totalInfoAndCurrentDownloadInfo=totalInfoAndCurrentDownloadInfo;
+	var msg = {};
+	msg.type = msgType;
+	msg.data=data;
+	chrome.runtime.sendMessage(msg);
+};
 function tSendMessage(msgType,data){
 	var msg = {};
 	msg.type=msgType;
@@ -173,7 +187,7 @@ function removeHTMLTag(str) {
 	}
 }*/
 
-function getFormatedAndAuthorAndBookinfo(dObject){
+/*function getFormatedAndAuthorAndBookinfo(dObject){
 	divObject=$(dObject);
 // var title=divObject.find("a").eq(0)[0].innerText;
 	var authors="";
@@ -186,7 +200,7 @@ function getFormatedAndAuthorAndBookinfo(dObject){
 	}
 	return authors+"|"+bookInfoText;
 }
-/*function download(currentDownloadPageIndex){
+function download(currentDownloadPageIndex){
 // currentDownloadInfo2 {pageNo,totalNo,pageIndex}
 // 初步想法：将下载的总信息放在 bg中，因为cs每次激活都会从新执行，以总信息作为循环依据，并修改成单项下载
 	var currentDownloadInfo2={}
