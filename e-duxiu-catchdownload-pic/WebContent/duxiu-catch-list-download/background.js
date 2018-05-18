@@ -159,41 +159,6 @@ function bStop() {
 	if (t!=-1){clearTimeout(t); }
 	
 };
-/*chrome.downloads.onDeterminingFilename.addListener(function(item, suggest) {
-	suggest({
-		filename : currentDownloadInfo2.totalNo + "-" + item.filename,
-		conflict_action : 'overwrite',
-		conflictAction : 'overwrite'
-	});
-	totalData.downloadStatus = "已经下载:" + currentDownloadInfo2.totalNo + "-"
-			+ item.filename
-	var msgDlNext = {};
-	//新改动
-	msgDlNext.type = "msg-catch&downloadThisItem-withTotalInfo";
-	totalInfoAndCurrentDownloadInfo.currentDItemIndexInTotal++;
-	msgDlNext.totalInfoAndCurrentDownloadInfo = totalInfoAndCurrentDownloadInfo;
-	// 通知cs下载下一个
-	chrome.tabs.query({
-		// active : true,
-		currentWindow : true
-	}, function(tabs) {
-		chrome.tabs.sendMessage(tabs[0].id, msgDlNext, function(response) {
-		});
-	});
-	chrome.tabs.query({
-		active : true,
-		currentWindow : true
-	// url:"about:blank"
-	}, function(tabs) {
-		// 删除新打开的空白页
-		chrome.tabs.remove(tabs[0].id);
-	});
-	// chrome.runtime.onMessage.addListener(catchStop);
-	totalData.downloadStatus = "已经下载: " + currentDownloadInfo2.totalNo + "-"
-			+ item.filename + ";" + "将要下载: " + msgDlNext.pageIndex
-
-});
-*/
 function tCaltulatePageIndex(itemIndex,amountPerPage){
 	if (amountPerPage!=0){
 		return Math.ceil(itemIndex/amountPerPage);
