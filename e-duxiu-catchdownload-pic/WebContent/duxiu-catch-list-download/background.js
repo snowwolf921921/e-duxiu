@@ -171,24 +171,34 @@ function tSendMsgToCS(msgType,data) {
 	var msg = {};
 	msg.type = msgType;
 	msg.data=data;
-	if (lastTabId=-1){
+//	if (lastTabId=-1){
 		chrome.tabs.query({
-//		 active : true,
+//			active : true,
 			currentWindow : true
 		}, function(tabs) {
 			if(tabs.length>0){
-				lastTabId=tabs[0].id;
+//				lastTabId=tabs[0].id;
 				chrome.tabs.sendMessage(tabs[0].id, msg, function(response) {
 //			console.log(response.farewell);
 				});
 			}
 		});
-	}else{
-		chrome.tabs.sendMessage(lastTabId, msg, function(response) {
-//			console.log(response.farewell);
-				});
-	}
+//	}else{
+//		chrome.tabs.sendMessage(lastTabId, msg, function(response) {
+////			console.log(response.farewell);
+//				});
+//	}
 };
+function tGetDomainFromUrl(url){
+	var host = "null";
+	if(typeof url == "undefined" || null == url)
+		url = window.location.href;
+	var match = url.match(regex);
+	if(typeof match != "undefined" && null != match)
+		host = match[1];
+	return host;
+}
+
 function tSendMsgToPopup(msgType,data) {
 //	totalData.totalInfoAndCurrentDownloadInfo=totalInfoAndCurrentDownloadInfo;
 	var msg = {};
